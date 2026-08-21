@@ -514,6 +514,11 @@
         <i class="fa-solid fa-chart-pie"></i> 종합 대시보드
       </a>
 
+      <div class="nav-category">나만의 진로 시뮬레이터</div>
+      <a class="nav-item" onclick="switchSection('sec-simulator')">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> 진로 로드맵 시뮬레이터
+      </a>
+
       <div class="nav-category">과목선택 & 이수체계</div>
       <a class="nav-item" onclick="switchSection('sec-guide')">
         <i class="fa-solid fa-road"></i> 진로 멘토링 로드맵
@@ -642,6 +647,12 @@
                 </tr>
               </thead>
               <tbody>
+                <tr style="background:#fffbeb;">
+                  <td><span class="badge" style="background:#fef3c7;color:#92400e;">✨ NEW</span></td>
+                  <td><strong>진로 로드맵 시뮬레이터</strong></td>
+                  <td>희망 대학·학과·내신을 입력하면 나만의 6학기 과목 로드맵과 지원 전략을 즉시 생성</td>
+                  <td><button class="badge badge-warning" onclick="switchSection('sec-simulator')">체험하기</button></td>
+                </tr>
                 <tr>
                   <td><span class="badge badge-primary">과목선택</span></td>
                   <td><strong>진로 멘토링 로드맵</strong></td>
@@ -730,6 +741,49 @@
             </table>
           </div>
         </div>
+      </section>
+
+      <!-- ================= SECTION: SIMULATOR ================= -->
+      <section id="sec-simulator" class="section-view">
+        <div class="hero-card" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); box-shadow: 0 10px 25px -5px rgba(147,51,234,0.3);">
+          <h2><i class="fa-solid fa-wand-magic-sparkles"></i> 나만의 진로 로드맵 시뮬레이터</h2>
+          <p style="color:#ede9fe;">학년·희망 계열·목표 대학/학과·현재 내신을 입력하면, 6학기 과목 로드맵과 지원 전략을 자동으로 생성해 드립니다. 상담 전 학생이 미리 작성해 보거나, 상담 중 멘토와 함께 채워도 좋습니다.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3><i class="fa-solid fa-sliders text-primary"></i> 입력하기</h3></div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">현재 학년</label>
+              <select id="sim-grade" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
+                <option value="고1">고등학교 1학년</option>
+                <option value="고2">고등학교 2학년</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 계열</label>
+              <select id="sim-track" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">현재 내신 등급대</label>
+              <select id="sim-grade-band" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 대학 (선택 입력)</label>
+              <input id="sim-univ" type="text" placeholder="예: 성균관대학교" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 학과 (선택 입력)</label>
+              <input id="sim-major" type="text" placeholder="예: 컴퓨터공학과" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
+            </div>
+          </div>
+          <button class="btn-print" style="margin-top:18px; background:var(--primary); color:#fff; border:none; padding:10px 20px; font-size:0.9rem;" onclick="runSimulation()">
+            <i class="fa-solid fa-play"></i> 시뮬레이션 실행
+          </button>
+          <p style="color:var(--text-muted); font-size:0.78rem; margin-top:10px;">※ 본 시뮬레이터는 핸드북에 수록된 과목선택 로드맵·전공권장 매트릭스·입시결과 데이터를 규칙 기반으로 조합해 보여주는 참고 도구이며, 실제 대학별 요강·수능최저·경쟁률은 매년 바뀝니다. 최종 지원 전략은 반드시 멘토·교사와의 상담과 대학 공식 자료로 확정하세요.</p>
+        </div>
+
+        <div id="sim-result"></div>
       </section>
 
       <!-- ================= SECTION: GUIDE ================= -->
@@ -1157,7 +1211,7 @@
           </div>
           <div class="callout callout-warning">
             <h4><i class="fa-solid fa-triangle-exclamation"></i> 데이터 활용 시 반드시 확인하세요</h4>
-            본 데이터는 <strong>2025학년도 수시(2024년 9~12월 실시) 기준 참고자료</strong>이며, 각 대학 입학처 및 입시 전문 사이트 공개 자료를 바탕으로 구성했습니다. 대학별 모집 인원·전형 방법·컷트라인은 <strong>매년 변경</strong>되므로, 실제 상담 시에는 반드시 해당 대학의 최신 공식 입학전형 결과와 모집요강을 확인하세요.
+            아래 표의 <strong>수시 경쟁률은 2026학년도(2025년 9~12월 실시) 최신 수치로 업데이트</strong>했습니다(2026년 8월 업데이트, 출처는 하단 참고). 다만 학과별 70% 컷과 수능 최저 요약은 아직 <strong>2025학년도 기준 참고자료</strong>가 섞여 있으니, 실제 상담 시에는 반드시 해당 대학의 최신 공식 입학전형 결과와 모집요강을 확인하세요. 대학별 모집 인원·전형 방법·컷트라인은 <strong>매년 변경</strong>됩니다.
           </div>
           <div class="table-container">
             <table>
@@ -1170,20 +1224,32 @@
                 </tr>
               </thead>
               <tbody>
-                <tr><td><strong>서울대</strong></td><td>9.07 : 1</td><td>의예 1.11 / 정외 1.21 / 경제 1.11</td><td>지균: 국수영탐 3합 7 이내</td></tr>
-                <tr><td><strong>연세대</strong></td><td>16.39 : 1</td><td>의예 1.01 / 약학 1.04 / 경영 1.27 / 전전 1.26</td><td>추천형: 국수영탐 합 5 (의약 3)</td></tr>
-                <tr><td><strong>고려대</strong></td><td>20.30 : 1</td><td>의대 1.27 / 컴공 1.89 / 전전 1.96 / 경영 2.54</td><td>학업우수: 국수영탐 합 5 (의대 4)</td></tr>
-                <tr><td><strong>성균관대</strong></td><td>31.91 : 1</td><td>의예 1.56 / 전자전기 1.52 / 경영 1.48 / SW 3.53</td><td>교과: 국수영탐 3합 6~7</td></tr>
-                <tr><td><strong>서강대</strong></td><td>—</td><td>화공생명 1.31 / 컴공 1.44 / 경영 1.50 / 경제 1.63</td><td>교과 지역균형: 국수영탐 합 5</td></tr>
-                <tr><td><strong>한양대</strong></td><td>31.94 : 1</td><td>의예 1.51 / 컴소 2.41 / 경영(교과) 1.67 (학종 3.53)</td><td>학종 서류형: 수능최저 없음</td></tr>
-                <tr><td><strong>중앙대</strong></td><td>26.71 : 1</td><td>의학 1.24 / SW 1.72 / 간호 1.89 / 경영 2.18</td><td>논술: 국수영탐 3합 6 (의학 4합 5)</td></tr>
-                <tr><td><strong>경희대</strong></td><td>25.31 : 1</td><td>약학 50:1 / 한의예 34.6:1 / 컴퓨터AI 18.5:1</td><td>학종: 수능최저 없음</td></tr>
-                <tr><td><strong>한국외대</strong></td><td>17.69 : 1</td><td>LT학부(언어AI) 2.32 / 경영 2.4등급대</td><td>논술 있음, 학종은 대부분 없음</td></tr>
-                <tr><td><strong>서울시립대</strong></td><td>19.75 : 1</td><td>전컴공 1.72 / 신소재 1.77 / 경제 1.93 / 행정 1.97</td><td>교과 지역균형: 국수영탐 합 6 이내</td></tr>
+                <tr><td><strong>서울대</strong></td><td>8.12 : 1 <span class="badge badge-success" style="font-size:0.68rem;">2026</span></td><td>의예 1.11 / 정외 1.21 / 경제 1.11</td><td>지균: 국수영탐 3합 7 이내</td></tr>
+                <tr><td><strong>연세대</strong></td><td>15.10 : 1 <span class="badge badge-success" style="font-size:0.68rem;">2026</span></td><td>의예 1.01 / 약학 1.04 / 경영 1.27 / 전전 1.26</td><td>추천형: 국수영탐 합 5 (의약 3)</td></tr>
+                <tr><td><strong>고려대</strong></td><td>20.35 : 1 <span class="badge badge-success" style="font-size:0.68rem;">2026</span></td><td>의대 1.27 / 컴공 1.89 / 전전 1.96 / 경영 2.54</td><td>학업우수: 국수영탐 합 5 (의대 4)</td></tr>
+                <tr><td><strong>성균관대</strong></td><td>32.49 : 1 <span class="badge badge-success" style="font-size:0.68rem;">2026</span></td><td>의예 1.56 / 전자전기 1.52 / 경영 1.48 / SW 3.53</td><td>교과: 국수영탐 3합 6~7</td></tr>
+                <tr><td><strong>서강대</strong></td><td>— <span class="badge badge-warning" style="font-size:0.68rem;">확인중</span></td><td>화공생명 1.31 / 컴공 1.44 / 경영 1.50 / 경제 1.63</td><td>교과 지역균형: 국수영탐 합 5</td></tr>
+                <tr><td><strong>한양대</strong></td><td>30.99 : 1 <span class="badge badge-success" style="font-size:0.68rem;">2026</span></td><td>의예 1.51 / 컴소 2.41 / 경영(교과) 1.67 (학종 3.53)</td><td>학종 서류형: 수능최저 없음</td></tr>
+                <tr><td><strong>중앙대</strong></td><td>30.39 : 1 <span class="badge badge-success" style="font-size:0.68rem;">2026</span></td><td>의학 1.24 / SW 1.72 / 간호 1.89 / 경영 2.18</td><td>논술: 국수영탐 3합 6 (의학 4합 5)</td></tr>
+                <tr><td><strong>경희대</strong></td><td>25.31 : 1 <span class="badge badge-warning" style="font-size:0.68rem;">2025</span></td><td>약학 50:1 / 한의예 34.6:1 / 컴퓨터AI 18.5:1</td><td>학종: 수능최저 없음</td></tr>
+                <tr><td><strong>한국외대</strong></td><td>17.69 : 1 <span class="badge badge-warning" style="font-size:0.68rem;">2025</span></td><td>LT학부(언어AI) 2.32 / 경영 2.4등급대</td><td>논술 있음, 학종은 대부분 없음</td></tr>
+                <tr><td><strong>서울시립대</strong></td><td>19.75 : 1 <span class="badge badge-warning" style="font-size:0.68rem;">2025</span></td><td>전컴공 1.72 / 신소재 1.77 / 경제 1.93 / 행정 1.97</td><td>교과 지역균형: 국수영탐 합 6 이내</td></tr>
               </tbody>
             </table>
           </div>
-          <p style="color: var(--text-muted); font-size: 0.85rem; margin: 10px 0 4px;">💡 수시 경쟁률이 높다고 합격이 어려운 것은 아닙니다. 전형별 <strong>실질 경쟁률</strong>과 합격자 성적을 함께 확인하세요.</p>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin: 10px 0 4px;">💡 수시 경쟁률이 높다고 합격이 어려운 것은 아닙니다. 전형별 <strong>실질 경쟁률</strong>과 합격자 성적을 함께 확인하세요. <span class="badge badge-success" style="font-size:0.68rem;">2026</span> 표시는 2026학년도 실측치, <span class="badge badge-warning" style="font-size:0.68rem;">2025</span> 표시는 아직 2025학년도 수치를 참고자료로 유지하고 있다는 뜻입니다.</p>
+
+          <h4 style="margin: 20px 0 8px; color: var(--secondary);"><i class="fa-solid fa-arrow-trend-up"></i> 2026학년도 최신 입시결과 확인된 변동사항</h4>
+          <div class="callout callout-success">
+            <ul style="margin-left: 18px; line-height:1.9;">
+              <li><strong>전체 동향</strong>: 서울대·연세대·고려대 모집인원이 7,040명→7,125명으로 늘며 3개교 합산 경쟁률은 15.60:1 → <strong>14.93:1</strong>로 소폭 하락. 의·약학 계열 쏠림은 여전하나 전년보다 다소 완화됨.</li>
+              <li><strong>연세대</strong>: 학생부교과(추천형) 의예과 70%·50%컷 모두 <strong>1등급대</strong>로 압도적 1위 유지. 학생부종합(활동우수형)은 의예과 최종등록자 기준 70%컷 <strong>1.07등급</strong>.</li>
+              <li><strong>고려대</strong>: 학생부종합(계열적합전형) 전체 합격자 교과 70%컷 <strong>1.02등급</strong>, 의과대학은 전체 모집단위 중 가장 높은 <strong>1.45등급</strong>.</li>
+              <li><strong>서강대</strong>: 자연·공학계열은 화공생명공학과 1.31, 컴퓨터공학과 1.44, 화학과 1.45가, 인문·사회계열은 AI기반 자유전공학부 1.48, 경영학부 1.50, 지식융합미디어학부 1.57, 경제학과 1.63이 70%컷으로 형성.</li>
+              <li><strong>성균관대</strong>(학교장추천 기준): 신설 배터리학과(삼성SDI 계약학과) 70%컷 1.36으로 최상위, 전자전기공학부 1.39, 자연과학계열·생명과학과 각 1.44, 공학계열 1.48 순.</li>
+            </ul>
+            <p style="font-size:0.78rem; margin-top:10px;">출처: <a href="https://www.hankookilbo.com/News/Read/A2026010118210005257" target="_blank" rel="noopener">한국일보</a>, <a href="https://sgsg.hankyung.com/article/2026010907341" target="_blank" rel="noopener">생글생글(한국경제)</a>, <a href="https://www.veritas-a.com/news/articleView.html?idxno=607467" target="_blank" rel="noopener">베리타스알파(연세대)</a>, <a href="https://www.veritas-a.com/news/articleView.html?idxno=614086" target="_blank" rel="noopener">베리타스알파(고려대)</a>, <a href="https://www.kyobit.com/news/articleView.html?idxno=5293" target="_blank" rel="noopener">교육을 비추다(서강대·성균관대)</a> (2026년 8월 확인)</p>
+          </div>
 
           <h4 style="margin: 20px 0 8px; color: var(--secondary);"><i class="fa-solid fa-ranking-star"></i> 내신 등급별 지원 가능 대학 가이드 (참고용)</h4>
           <div class="table-container">
@@ -1219,7 +1285,7 @@
           </div>
           <div class="callout callout-warning">
             <h4><i class="fa-solid fa-triangle-exclamation"></i> 데이터 활용 시 반드시 확인하세요</h4>
-            본 데이터는 2025학년도 수시 기준 참고자료입니다. <strong>지역인재 전형 비율·수능 최저는 매년 변경</strong>되므로 반드시 해당 대학 입학처 최신 모집요강으로 재확인하세요.
+            본 데이터는 2025학년도 수시 기준 참고자료입니다. 2026학년도(2025년 실시) 지역거점 국립대 수시 결과는 대학별로 흩어져 있어 신뢰도 높은 통합 자료를 아직 확인하지 못했습니다. 참고로 <strong>2026학년도 정시 경쟁률은 충남대 4.88:1→6.14:1, 경북대 5.51:1→6.71:1</strong>로 모두 상승했다는 보도가 있어 지원 열기가 높아진 추세로 보이나, <strong>수시 등급컷은 반드시 각 대학 입학처 최신 자료로 확인</strong>하시기 바랍니다. <strong>지역인재 전형 비율·수능 최저는 매년 변경</strong>됩니다.
           </div>
           <div class="table-container">
             <table>
@@ -1793,6 +1859,235 @@
 
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    /* ============ 진로 로드맵 시뮬레이터 ============ */
+    const SIM_TRACKS = {
+      "의약학": {
+        icon: "fa-house-medical",
+        majors: "의예과·치의예과·한의예과·약학과·수의예과·간호학과",
+        core: ["미적분Ⅱ", "기하", "화학", "생명과학"],
+        recommended: ["세포와 물질대사", "생물의 유전", "화학 반응의 세계", "물리학"],
+        roadmap: [
+          ["고1-1", "공통수학1", "통합과학1, 과학탐구실험1", "통합사회1"],
+          ["고1-2", "공통수학2", "통합과학2, 과학탐구실험2", "한국사1·2"],
+          ["고2-1", "대수", "화학, 생명과학", "현대사회와 윤리, 정보"],
+          ["고2-2", "미적분Ⅰ, 확률과 통계", "물리학", "인문학과 윤리"],
+          ["고3-1", "미적분Ⅱ, 기하", "세포와 물질대사, 화학 반응의 세계", "융합과학 탐구"],
+          ["고3-2", "수학과제 탐구", "생물의 유전", "기후변화와 환경생태"]
+        ],
+        tip: "쉬운 과목으로 회피하지 말고 화학·생명과학 진로선택 3과목 이상을 완주하세요. 의약학 계열은 수능최저(국수영탐 합 3~5)가 실질 합격을 가르므로 고1부터 모의고사 1등급 관리가 병행되어야 합니다.",
+        caseHint: "최상위권 사례(사례 1)를 참고하세요 — 지역인재 교과를 안전판으로, 서울권 학종을 상향으로 조합하는 전략입니다."
+      },
+      "첨단 IT·AI": {
+        icon: "fa-microchip",
+        majors: "컴퓨터공학과·인공지능학과·소프트웨어학부·데이터사이언스학과·사이버보안학과",
+        core: ["미적분Ⅱ", "확률과 통계", "정보"],
+        recommended: ["기하", "인공지능 수학", "물리학", "인공지능 기초", "데이터 과학"],
+        roadmap: [
+          ["고1-1", "공통수학1", "통합과학1, 과학탐구실험1", "통합사회1"],
+          ["고1-2", "공통수학2", "통합과학2, 과학탐구실험2", "통합사회2"],
+          ["고2-1", "대수, 확률과 통계", "정보, 물리학", "공학 일반/기술·가정"],
+          ["고2-2", "미적분Ⅰ", "인공지능 기초", "사회와 문화"],
+          ["고3-1", "미적분Ⅱ, 인공지능 수학", "데이터 과학, 전자기와 양자", "로봇과 공학세계"],
+          ["고3-2", "기하, 실용 통계", "프로그래밍 심화/수학과제 탐구", "창의 공학 설계"]
+        ],
+        tip: "단순 코딩 스킬보다 수학적 알고리즘 원리(선형대수·미적분·확률)를 프로그래밍에 적용한 세특 탐구가 핵심입니다. 깃허브 프로젝트나 알고리즘 최적화 보고서로 차별화하세요.",
+        caseHint: "상위권 사례(사례 2)를 참고하세요 — 미적Ⅱ+기하+확통+물리 이수와 알고리즘 세특으로 인서울 상위 학종을 노리는 전략입니다."
+      },
+      "전통 공학": {
+        icon: "fa-gears",
+        majors: "전자전기공학부·기계공학부·화학공학과·신소재공학부·항공우주공학과",
+        core: ["미적분Ⅱ", "기하", "물리학"],
+        recommended: ["역학과 에너지", "전자기와 양자", "화학", "물질과 에너지"],
+        roadmap: [
+          ["고1-1", "공통수학1", "통합과학1, 과학탐구실험1", "통합사회1"],
+          ["고1-2", "공통수학2", "통합과학2, 과학탐구실험2", "통합사회2"],
+          ["고2-1", "대수", "물리학, 화학", "정보"],
+          ["고2-2", "미적분Ⅰ", "화학(심화 준비)", "기술·가정"],
+          ["고3-1", "미적분Ⅱ, 기하", "역학과 에너지, 전자기와 양자(또는 화학 반응의 세계)", "창의 공학 설계"],
+          ["고3-2", "수학과제 탐구", "물질과 에너지", "융합과학 탐구"]
+        ],
+        tip: "세부 전공(전자전기/기계/화공/신소재)에 따라 물리학·화학 비중이 달라집니다. 목표 학과의 「대학별 전공권장 매트릭스」를 함께 확인해 핵심 권장과목을 교차 점검하세요.",
+        caseHint: "상위권 사례(사례 2)의 이수 전략(미적Ⅱ+기하+물리 중심)을 참고할 수 있습니다."
+      },
+      "상경": {
+        icon: "fa-chart-line",
+        majors: "경영학과·경제학부·금융보험학과·응용통계학과·국제통상학과",
+        core: ["확률과 통계", "경제", "미적분Ⅰ"],
+        recommended: ["경제 수학", "미적분Ⅱ", "금융과 경제생활", "데이터 과학"],
+        roadmap: [
+          ["고1-1", "공통수학1", "통합사회1", "통합과학1"],
+          ["고1-2", "공통수학2", "통합사회2", "통합과학2"],
+          ["고2-1", "대수, 확률과 통계", "경제, 사회와 문화", "정보"],
+          ["고2-2", "미적분Ⅰ", "정치, 법과 사회, 세계지리", "현대사회와 윤리"],
+          ["고3-1", "경제 수학, 미적분Ⅱ", "금융과 경제생활", "데이터 과학"],
+          ["고3-2", "실용 통계", "사회문제 탐구, 국제 관계의 이해", "수학과 문화"]
+        ],
+        tip: "문과 계열 중 유일하게 수학 이수 심도(경제수학·확통)를 엄격히 평가받는 계열입니다. 수학을 기피하지 말고 '경제'와 '확률과 통계'는 반드시 이수하세요.",
+        caseHint: "중상위권 사례(사례 3)를 참고하세요 — 경제수학·확통 이수와 지거국 안정 지원을 병행하는 전략입니다."
+      },
+      "인문·사회": {
+        icon: "fa-landmark-flag",
+        majors: "행정학과·정치외교학과·미디어커뮤니케이션학과·심리학과·사회복지학과",
+        core: ["사회와 문화", "정치, 법과 사회"],
+        recommended: ["사회문제 탐구", "국제 관계의 이해", "확률과 통계", "독서와 작문"],
+        roadmap: [
+          ["고1-1", "공통수학1", "통합사회1", "통합과학1"],
+          ["고1-2", "공통수학2", "통합사회2", "통합과학2"],
+          ["고2-1", "대수", "정치, 법과 사회, 사회와 문화", "독서와 작문"],
+          ["고2-2", "확률과 통계", "현대사회와 윤리", "화법과 언어"],
+          ["고3-1", "(선택) 경제 수학", "사회문제 탐구, 국제 관계의 이해", "세계사"],
+          ["고3-2", "(선택) 수학과 문화", "미디어 영어, 역사로 탐구하는 현대 세계", "언어생활 탐구"]
+        ],
+        tip: "세부 전공(행정·미디어·심리·어문)에 따라 권장과목이 갈립니다. 「계열별 과목선택 가이드」의 인문·사회과학 세부 항목에서 지망 학과에 맞는 과목을 다시 확인하세요.",
+        caseHint: "진로 변경·성적 정체 사례(사례 4)의 스토리텔링 전략이 특히 도움이 될 수 있습니다."
+      },
+      "교육(사범)": {
+        icon: "fa-chalkboard-user",
+        majors: "초등교육과(교대)·국어/영어/수학/과학교육과 등 사범계열",
+        core: ["지망 전공 교과 일반·진로선택 전 과목"],
+        recommended: ["교육의 이해", "인간과 심리", "현대사회와 윤리"],
+        roadmap: [
+          ["고1-1", "공통수학1", "통합과학1", "통합사회1"],
+          ["고1-2", "공통수학2", "통합과학2", "통합사회2"],
+          ["고2-1", "대수", "지망 교과 일반선택 시작", "교육의 이해(교양)"],
+          ["고2-2", "미적분Ⅰ/확률과 통계", "지망 교과 일반선택 완성", "인간과 심리"],
+          ["고3-1", "지망 교과 진로선택 심화", "지망 교과 진로선택 심화", "현대사회와 윤리"],
+          ["고3-2", "(수학교육) 수학과제 탐구", "지망 교과 융합선택", "교육 관련 융합선택"]
+        ],
+        tip: "초등교육(교대)은 특정 편중 없는 전 과목 균형 이수가 핵심이며, 중등 사범계열은 지망 전공 교과의 일반·진로선택 전 과목을 빠짐없이 이수해야 합니다.",
+        caseHint: "「대학별 전공권장 매트릭스」의 초등교육과·수학교육과·국어/영어교육과 항목을 함께 확인하세요."
+      },
+      "예체능": {
+        icon: "fa-palette",
+        majors: "미술학과·음악학과·체육교육과 등 예체능 계열",
+        core: ["전공 실기 연계 교과(미술/음악/체육)"],
+        recommended: ["미술 창작·미술감상과 비평", "음악 연주와 창작", "운동과 건강"],
+        roadmap: [
+          ["고1-1", "공통수학1", "통합과학1", "통합사회1"],
+          ["고1-2", "공통수학2", "통합과학2", "통합사회2"],
+          ["고2-1", "전공 연계 일반선택 시작(미술/음악/체육)", "-", "-"],
+          ["고2-2", "전공 연계 일반선택 심화", "-", "-"],
+          ["고3-1", "전공 진로선택(미술창작·음악연주와창작·운동과건강 등)", "-", "-"],
+          ["고3-2", "전공 융합선택(미술감상과비평 등)", "-", "-"]
+        ],
+        tip: "실기 준비와 병행하여 전공 필수 이수 교과(미술/음악/체육)를 놓치지 않아야 하며, 대학별 실기 반영 비율은 매년 다르므로 목표 대학 모집요강을 꼭 확인하세요.",
+        caseHint: "예체능 계열은 실기 전형 특성상 사례집의 일반 학종 사례와는 별도로, 지망 대학 실기 요강을 우선 확인하세요."
+      }
+    };
+
+    const SIM_GRADE_BANDS = [
+      ["1.0~1.3등급", "최상위권 — 서울대·연세대·고려대 의약학", "최상위 전형 도전", 1],
+      ["1.3~1.7등급", "상위권 — SKY 일반학과, 서강·성균관 인기학과", "학종/교과 균형 지원", 2],
+      ["1.7~2.5등급", "중상위권 — 한양·중앙·경희 상위학과, 지거국 인기과 상단", "학종 + 논술 병행, 지역인재 병행 검토", 2],
+      ["2.5~3.5등급", "중위권 — 경희·외대·시립대·건동홍, 지거국 인기학과", "학종 집중 + 지역인재 적극 활용", 3],
+      ["3.5~4.5등급", "중하위권 — 중위권 서울 사립대, 지거국 일반학과", "교과전형 + 지역 국립대 병행", 4],
+      ["4.5등급 이상", "지역 국립대·전문대 중심", "지역균형·지역인재 전형 중심 지원", 4]
+    ];
+
+    const SIM_CASES = {
+      1: "사례 1 (최상위권 의약학, 1.1등급): 진로선택 심화 완수 + 지거국 지역인재 교과 안정 후 서울권 학종 상향",
+      2: "사례 2 (상위권 첨단 IT, 1.8~2.5등급): 미적Ⅱ+기하+확통+물리 이수 및 알고리즘 세특 차별화, 안전카드로 지거국 병행",
+      3: "사례 3 (중상위권 인문·상경, 2.5~3.5등급): 경제수학·확통 필수 이수 + 학종·교과 안정 지원 조합",
+      4: "사례 4 (진로 변경·성적 정체, 3.5~4.5등급): 스토리텔링 재해석 + 수시 포기 금지, 중위권 학종·지거국 교과 조합"
+    };
+
+    function initSimulator() {
+      const trackSel = document.getElementById('sim-track');
+      const bandSel = document.getElementById('sim-grade-band');
+      if (!trackSel || trackSel.options.length) return;
+      Object.keys(SIM_TRACKS).forEach(key => {
+        const opt = document.createElement('option');
+        opt.value = key; opt.textContent = key;
+        trackSel.appendChild(opt);
+      });
+      SIM_GRADE_BANDS.forEach(band => {
+        const opt = document.createElement('option');
+        opt.value = band[0]; opt.textContent = band[0];
+        bandSel.appendChild(opt);
+      });
+    }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
+    function runSimulation() {
+      const grade = document.getElementById('sim-grade').value;
+      const trackKey = document.getElementById('sim-track').value;
+      const bandLabel = document.getElementById('sim-grade-band').value;
+      const univ = document.getElementById('sim-univ').value.trim();
+      const major = document.getElementById('sim-major').value.trim();
+
+      const track = SIM_TRACKS[trackKey];
+      const band = SIM_GRADE_BANDS.find(b => b[0] === bandLabel) || SIM_GRADE_BANDS[0];
+      const caseText = SIM_CASES[band[3]];
+
+      const nameLine = (univ || major)
+        ? `<strong>${esc(univ || '희망 대학')} ${esc(major || '희망 학과')}</strong> 지원을 목표로 한 `
+        : '';
+
+      const remainSemesters = grade === '고1'
+        ? track.roadmap
+        : track.roadmap.slice(2); // 고2라면 고2-1부터 표시
+
+      const roadmapRows = remainSemesters.map(r => `
+        <tr><td><strong>${esc(r[0])}</strong></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>
+      `).join('');
+
+      const coreChips = track.core.map(c => `<span class="badge badge-danger" style="margin:2px;">${esc(c)}</span>`).join(' ');
+      const recChips = track.recommended.map(c => `<span class="badge badge-primary" style="margin:2px;">${esc(c)}</span>`).join(' ');
+
+      const nextSteps = grade === '고1'
+        ? ["관심 학과 3~5개 탐색 및 계열 최종 결정", "2~3학년 선택과목 예비 수강신청 시 위 로드맵과 대조", "공통과목 내신 1~2등급 확보 및 세특 탐구 습관 만들기"]
+        : ["3학년 최종 선택과목 확정 및 누락 권장과목 점검", "진로선택 과목 성취도 A 확보에 집중", "목표 대학 2~3개 구체화(상향/적정/안전) 및 수능 최저 달성 가능성 점검"];
+
+      document.getElementById('sim-result').innerHTML = `
+        <div class="card" style="border:2px solid #a855f7;">
+          <div class="card-header">
+            <h3><i class="fa-solid ${track.icon} text-primary"></i> ${nameLine}${esc(trackKey)} 계열 진로 로드맵 결과</h3>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:14px;">대표 학과: ${esc(track.majors)}</p>
+
+          <h4 style="margin:6px 0 8px; color:var(--secondary);"><i class="fa-solid fa-star"></i> 핵심 권장과목 / 권장과목</h4>
+          <p style="margin-bottom:6px;">🔴 핵심 권장과목: ${coreChips}</p>
+          <p style="margin-bottom:14px;">🔵 권장과목: ${recChips}</p>
+
+          <h4 style="margin:14px 0 8px; color:var(--secondary);"><i class="fa-solid fa-timeline"></i> ${grade} 기준 남은 학기별 과목 로드맵</h4>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>학기</th><th>수학</th><th>과학/전문교과</th><th>사회/기타</th></tr></thead>
+              <tbody>${roadmapRows}</tbody>
+            </table>
+          </div>
+
+          <div class="callout callout-info" style="margin-top:16px;">
+            <h4><i class="fa-solid fa-bullseye"></i> 내신 ${esc(bandLabel)} 기준 목표 대학군</h4>
+            <strong>${esc(band[1])}</strong> — ${esc(band[2])}
+          </div>
+
+          <div class="callout callout-warning">
+            <h4><i class="fa-solid fa-lightbulb"></i> 전략 팁</h4>
+            ${esc(track.tip)}
+          </div>
+
+          <div class="callout callout-success">
+            <h4><i class="fa-solid fa-user-graduate"></i> 참고할 만한 상담 사례</h4>
+            ${esc(caseText)}<br>
+            <span style="font-size:0.82rem;">${esc(track.caseHint)}</span>
+          </div>
+
+          <h4 style="margin:16px 0 8px; color:var(--secondary);"><i class="fa-solid fa-list-check"></i> 다음 학기까지 실천 과제 3개</h4>
+          <ol style="margin-left:18px; line-height:1.8;">
+            ${nextSteps.map(s => `<li>${esc(s)}</li>`).join('')}
+          </ol>
+          <p style="color:var(--text-muted); font-size:0.8rem; margin-top:10px;">💡 더 자세한 근거는 「계열별 과목선택 가이드」, 「대학별 전공권장 매트릭스」, 「실전 멘토링 상담 사례집」 섹션에서 확인하세요.</p>
+        </div>
+      `;
+      document.getElementById('sim-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    initSimulator();
   </script>
 </body>
 </html>
