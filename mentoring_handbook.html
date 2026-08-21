@@ -598,7 +598,7 @@
       <section id="sec-dashboard" class="section-view active">
         <div class="hero-card">
           <h2>🎯 고1·2 과목선택 중심 진로설계 멘토링</h2>
-          <p>서울·부산교육청 공식 지침, 서울 주요대 및 지거국 수시 입결, 대학별 40개 세부 학과 권장과목, 세특 작성 매뉴얼을 총망라한 학생 중심 완전판 핸드북입니다.</p>
+          <p>서울·부산교육청 공식 지침, 서울 주요대 및 지거국 수시 입결, 대학별 45개 세부 모집단위 권장과목, 세특 작성 매뉴얼을 총망라한 학생 중심 완전판 핸드북입니다.</p>
         </div>
 
         <div class="stats-grid">
@@ -613,7 +613,7 @@
             <div class="stat-icon stat-green"><i class="fa-solid fa-building-columns"></i></div>
             <div class="stat-info">
               <h4>대학 전공 권장과목</h4>
-              <div class="stat-value">40개 학과 완비 (공식)</div>
+              <div class="stat-value">45개 모집단위 수록</div>
             </div>
           </div>
           <div class="stat-card">
@@ -674,7 +674,7 @@
                 <tr>
                   <td><span class="badge badge-primary">과목선택</span></td>
                   <td><strong>대학별 전공권장 매트릭스</strong></td>
-                  <td>주요 5개 대학 공동연구 공인 40개 세부 학과별 핵심 권장과목/권장과목 맵</td>
+                  <td>주요 대학 공동연구 기준 45개 세부 모집단위별 핵심 권장과목/권장과목 맵</td>
                   <td><button class="badge badge-primary" onclick="switchSection('sec-matrix')">이동</button></td>
                 </tr>
                 <tr>
@@ -835,6 +835,33 @@
             <li><input type="checkbox"> <strong>수능 취약 과목 집중 보완</strong></li>
             <li><input type="checkbox"> <strong>고3 로드맵 설계</strong> (월별 계획 수립)</li>
           </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-layer-group text-primary"></i> 수시전형 5종 한눈에 보기</h3>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>전형 유형</th><th>주요 평가요소</th><th>특징</th><th>서울 주요대 수시 내 비중</th></tr></thead>
+              <tbody>
+                <tr><td><strong>학생부종합전형 (학종)</strong></td><td>학교생활기록부, 면접</td><td>학업역량·진로역량·공동체역량을 정성 종합 평가</td><td><span class="badge badge-primary">약 33.8%</span></td></tr>
+                <tr><td><strong>학생부교과전형</strong></td><td>내신 성적</td><td>교과 성적 중심, 수능 최저 있는 경우 많음</td><td><span class="badge badge-primary">약 12.1%</span></td></tr>
+                <tr><td><strong>논술전형</strong></td><td>논술고사 + 내신</td><td>논술 실력이 관건, 경쟁률 극도로 높음(100:1 이상 빈번)</td><td><span class="badge badge-primary">약 9.5%</span></td></tr>
+                <tr><td><strong>특기자전형</strong></td><td>특기 역량</td><td>어학·수학·과학 특기자 등, 모집 규모 축소 추세</td><td><span class="badge" style="background:#f1f5f9;color:#475569;">기타</span></td></tr>
+                <tr><td><strong>실기전형</strong></td><td>실기 + 내신</td><td>예체능 계열 중심, 대학별 실기 반영 비율 차이 큼</td><td><span class="badge" style="background:#f1f5f9;color:#475569;">기타</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout callout-info">
+            <h4><i class="fa-solid fa-lightbulb"></i> 전형 선택의 기준 — 내 강점이 어디에 있는가</h4>
+            <ul style="margin-left:18px; line-height:1.85;">
+              <li><strong>내신은 좋은데 비교과가 약하다</strong> → 학생부교과전형 중심 (단, 수능 최저 충족이 필수)</li>
+              <li><strong>내신은 평범하지만 탐구·활동 기록이 강하다</strong> → 학생부종합전형 중심 (수능최저 없는 전형이 유리)</li>
+              <li><strong>내신은 낮지만 사고력·글쓰기가 강하다</strong> → 논술전형 병행 (다만 경쟁률을 감안해 1~2장만)</li>
+              <li><strong>지역 고교 재학 중이다</strong> → 어떤 유형이든 <strong>지역인재 전형</strong>을 최우선 카드로 확보</li>
+            </ul>
+          </div>
         </div>
 
         <div class="card">
@@ -1104,10 +1131,46 @@
                   <td>화학 과목 비중이 생명과학과 동등 이상으로 중요</td>
                 </tr>
                 <tr>
+                  <td><strong>한의예과</strong></td>
+                  <td><strong>생명과학, 화학, 확률과 통계</strong></td>
+                  <td>세포와 물질대사, 현대사회와 윤리, 한문</td>
+                  <td>인문/자연 통합 선발 대학 다수, 윤리·철학 소양 가산</td>
+                </tr>
+                <tr>
+                  <td><strong>수의예과</strong></td>
+                  <td><strong>생명과학, 화학</strong></td>
+                  <td>생물의 유전, 세포와 물질대사, 미적분Ⅱ, 기하</td>
+                  <td>동물생리학 연계 생명과학 심화 집중</td>
+                </tr>
+                <tr>
+                  <td><strong>간호학과</strong></td>
+                  <td><strong>생명과학, 화학</strong></td>
+                  <td>확률과 통계, 미적분Ⅰ, 세포와 물질대사, 인간과 심리</td>
+                  <td>인문/자연 융합 성향, 통계 및 심리·윤리 과목 추천</td>
+                </tr>
+                <tr>
+                  <td><strong>임상병리 / 물리치료</strong></td>
+                  <td><strong>생명과학, 화학</strong></td>
+                  <td>물리학, 인체와 건강, 확률과 통계</td>
+                  <td>물리치료는 물리학(역학) 연계가 매우 중요</td>
+                </tr>
+                <tr>
                   <td><strong>컴퓨터공학 / AI학과</strong></td>
                   <td><strong>미적분Ⅱ, 확률과 통계, 정보</strong></td>
                   <td>기하, 인공지능 수학, 물리학, 인공지능 기초, 데이터 과학</td>
                   <td>선형대수·통계 기반 수학적 역량 집중 평가</td>
+                </tr>
+                <tr>
+                  <td><strong>데이터사이언스학과</strong></td>
+                  <td><strong>확률과 통계, 미적분Ⅰ, 정보</strong></td>
+                  <td>미적분Ⅱ, 경제 수학, 데이터 과학, 인공지능 기초</td>
+                  <td>수학·통계적 데이터 분석력과 프로그래밍 연계</td>
+                </tr>
+                <tr>
+                  <td><strong>사이버보안 / 정보보안</strong></td>
+                  <td><strong>미적분Ⅰ, 확률과 통계, 정보</strong></td>
+                  <td>미적분Ⅱ, 기하, 이산수학(공동교육과정), 전자기와 양자</td>
+                  <td>암호학을 위한 정수론·이산수학 및 네트워크 기초</td>
                 </tr>
                 <tr>
                   <td><strong>전기전자 / 반도체공학</strong></td>
@@ -1128,10 +1191,46 @@
                   <td>화학과 물리학 비중 5:5 요구</td>
                 </tr>
                 <tr>
+                  <td><strong>반도체공학과</strong></td>
+                  <td><strong>미적분Ⅱ, 기하, 물리학, 화학</strong></td>
+                  <td>전자기와 양자, 물질과 에너지, 역학과 에너지</td>
+                  <td>양자역학·반도체 공정을 위해 물리+화학 모두 필수</td>
+                </tr>
+                <tr>
+                  <td><strong>항공우주공학과</strong></td>
+                  <td><strong>미적분Ⅱ, 기하, 물리학</strong></td>
+                  <td>역학과 에너지, 지구시스템과학, 전자기와 양자</td>
+                  <td>유체역학·비행동역학을 위한 심화 물리 필수</td>
+                </tr>
+                <tr>
+                  <td><strong>건축 / 토목공학</strong></td>
+                  <td><strong>미적분Ⅰ, 기하, 물리학</strong></td>
+                  <td>미적분Ⅱ, 역학과 에너지, 미술, 공간지리</td>
+                  <td>구조공학(수학·물리)과 디자인(미술)의 융합</td>
+                </tr>
+                <tr>
                   <td><strong>경제학부 / 경영학과</strong></td>
                   <td><strong>확률과 통계, 경제 (경제학부는 미적Ⅰ 필수)</strong></td>
                   <td>경제 수학, 미적분Ⅱ, 금융과 경제생활, 사회와 문화</td>
                   <td>문과 중 수학 이수 심도를 가장 엄격히 평가</td>
+                </tr>
+                <tr>
+                  <td><strong>금융 / 보험학과</strong></td>
+                  <td><strong>확률과 통계, 경제 수학, 경제</strong></td>
+                  <td>금융과 경제생활, 미적분Ⅰ, 미적분Ⅱ, 실용 통계</td>
+                  <td>금융공학·리스크 관리를 위한 수학 심화</td>
+                </tr>
+                <tr>
+                  <td><strong>국제통상 / 무역</strong></td>
+                  <td><strong>경제, 세계지리, 사회와 문화</strong></td>
+                  <td>국제 관계의 이해, 세계사, 영미 문학 읽기, 제2외국어</td>
+                  <td>글로벌 거시경제 및 다문화·국제정치 소양</td>
+                </tr>
+                <tr>
+                  <td><strong>통계 / 응용통계학과</strong></td>
+                  <td><strong>확률과 통계, 대수, 미적분Ⅰ</strong></td>
+                  <td>미적분Ⅱ, 데이터 과학, 정보, 경제 수학</td>
+                  <td>데이터 분석 및 통계적 추론 역량 집중 평가</td>
                 </tr>
                 <tr>
                   <td><strong>행정학 / 정치외교학</strong></td>
@@ -1168,6 +1267,12 @@
                   <td><strong>생명과학, 화학</strong></td>
                   <td>세포와 물질대사, 생물의 유전, 화학 반응의 세계, 미적분Ⅱ</td>
                   <td>생화학·유전공학 위한 화학+생명 융합 이수</td>
+                </tr>
+                <tr>
+                  <td><strong>지구환경과학과</strong></td>
+                  <td><strong>지구과학, 물리학 또는 화학</strong></td>
+                  <td>지구시스템과학, 행성우주과학, 기후변화와 환경생태</td>
+                  <td>지구과학뿐 아니라 물리·화학 기초 필수</td>
                 </tr>
                 <tr>
                   <td><strong>수학교육과</strong></td>
@@ -1312,6 +1417,59 @@
             </table>
           </div>
 
+          <h4 style="margin: 20px 0 8px; color: var(--secondary);"><i class="fa-solid fa-building-columns"></i> 대학별 특성 및 추천 학과</h4>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>대학</th><th>권역 / 지역인재 대상</th><th>대학 특성</th><th>추천(강세) 학과</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>부산대</strong></td><td>부산·울산·경남</td>
+                  <td>부·울·경 최고 명문 국립대, 의대·법학전문대학원 운영. 공대 취업 강세</td>
+                  <td>의예과, 간호학과, 기계공학, 화학공학, 경영학, 정보컴퓨터공학</td>
+                </tr>
+                <tr>
+                  <td><strong>경북대</strong></td><td>대구·경북</td>
+                  <td>대경권 최고 명문, 거점 국립대 중 최대 규모. 의대·치대·법전원 운영</td>
+                  <td>의예과, 치의예과, 컴퓨터학부, 전자공학부, 경영학부</td>
+                </tr>
+                <tr>
+                  <td><strong>전남대</strong></td><td>광주·전라남도</td>
+                  <td>호남권 최고 명문. <strong>의예과 지역인재 약 79%로 전국 최고 비율</strong></td>
+                  <td>의예과, 간호학과, 법학과(학부), 전기전자컴퓨터학부</td>
+                </tr>
+                <tr>
+                  <td><strong>전북대</strong></td><td>전라북도</td>
+                  <td>전주 거점 국립대. 법학부를 학부로 운영, 수의예과 보유</td>
+                  <td>의예과, 수의예과, 간호학과, 공과대학</td>
+                </tr>
+                <tr>
+                  <td><strong>충남대</strong></td><td>대전·세종·충남·충북</td>
+                  <td>대전·충남 최고 명문. 대덕연구단지 인접으로 정부기관·연구소 취업 강세</td>
+                  <td>의예과, 간호학과, 전자공학, 화학공학, 경영학부</td>
+                </tr>
+                <tr>
+                  <td><strong>충북대</strong></td><td>충청권</td>
+                  <td>청주 소재. 의약학 특성화(약학대학 보유), SK하이닉스 인접 반도체공학과 신설</td>
+                  <td>의예과, 약학과, 반도체공학과, 간호학과</td>
+                </tr>
+                <tr>
+                  <td><strong>강원대</strong></td><td>강원특별자치도</td>
+                  <td>춘천·원주 이원 캠퍼스(원주는 보건의료 특화). 의대·수의대 보유</td>
+                  <td>의예과, 수의예과(전국 최상위 경쟁), 간호학과</td>
+                </tr>
+                <tr>
+                  <td><strong>제주대</strong></td><td>제주특별자치도</td>
+                  <td>제주 유일 국립대. 지역인재 비중이 매우 높아 도내 학생 절대적 우위. 의대 소규모 선발</td>
+                  <td>의예과, 간호학과, 해양·관광 관련 학과</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout callout-info">
+            <h4><i class="fa-solid fa-briefcase"></i> 거점 국립대의 숨은 강점 — 지역인재 채용</h4>
+            공공기관은 지역인재를 일정 비율(약 35%) 의무 채용하도록 되어 있어, 거점 국립대 졸업생은 지역 공공기관·공기업 취업에서 실질적 이점을 갖습니다. 등록금도 연 300~400만 원 수준으로 사립대의 절반 이하이므로, <strong>"인서울이 무조건 낫다"는 통념 대신 취업 목표 지역과 학비를 함께 계산</strong>해 판단하세요.
+          </div>
+
           <h4 style="margin: 20px 0 8px; color: var(--secondary);"><i class="fa-solid fa-map-location-dot"></i> 지역인재 전형 활용 전략</h4>
           <div class="callout callout-info">
             <strong>핵심</strong>: 지역인재 전형은 해당 지역에서 고교를 재학 중이면 내신이 다소 낮아도 유리합니다! 의약학 계열은 지역인재 선발 비율이 60~80%에 달하므로, 해당 지역 거주(+고교 재학) 학생은 반드시 지역인재 전형으로 지원해야 합니다.
@@ -1422,40 +1580,50 @@
                   <td><span class="badge badge-danger">의약학</span></td>
                   <td>의예·치의예·한의예·약학·수의예·간호<br><span style="color:var(--text-muted);font-size:0.78rem;">임상의사, 신약개발 연구원, 임상간호사</span></td>
                   <td>① CRISPR 유전자 가위 원리와 유전 질환 치료 및 생명윤리 쟁점 ② 약물 전달 시스템(DDS) 나노입자 표적 지향성 ③ MRI·CT 영상 복원 알고리즘의 푸리에·라돈 변환 ④ SIR 감염병 확산 모델과 병원 내 교차감염 예방</td>
-                  <td>『이기적 유전자』<br>『숨결이 바람 될 때』</td>
+                  <td style="font-size:0.82rem; line-height:1.7;">『이기적 유전자』<br><span style="color:var(--text-muted);">리처드 도킨스</span><br>『생명이란 무엇인가』<br><span style="color:var(--text-muted);">에르빈 슈뢰딩거</span><br>『의학의 법칙들』<br><span style="color:var(--text-muted);">싯다르타 무케르지</span><br>『숨결이 바람 될 때』<br><span style="color:var(--text-muted);">폴 칼라니티</span></td>
                 </tr>
                 <tr>
                   <td><span class="badge badge-primary">첨단 IT·AI</span></td>
                   <td>컴퓨터공학·AI·데이터사이언스·사이버보안<br><span style="color:var(--text-muted);font-size:0.78rem;">AI 모델 연구원, 백엔드 개발자, 정보보안 전문가</span></td>
                   <td>① 경사하강법과 편미분을 이용한 인공신경망 가중치 최적화 ② 다익스트라 알고리즘을 활용한 최적 경로 탐색 구현 ③ 반도체 메모리의 양자역학적 터널링 현상 ④ 공공데이터 API 기후 시계열 회귀 예측 모델</td>
-                  <td>『알고리즘이 세상을 지배한다』<br>『해커와 화가』</td>
+                  <td style="font-size:0.82rem; line-height:1.7;">『인공지능의 시대』<br><span style="color:var(--text-muted);">헨리 키신저 외</span><br>『알고리즘이 세상을 지배한다』<br><span style="color:var(--text-muted);">크리스토퍼 스타이너</span><br>『수학으로 생각하기』<br><span style="color:var(--text-muted);">김민형</span><br>『해커와 화가』<br><span style="color:var(--text-muted);">폴 그레이엄</span></td>
                 </tr>
                 <tr>
                   <td><span class="badge badge-success">전통 공학</span></td>
                   <td>전자전기·기계·화학공학·신소재<br><span style="color:var(--text-muted);font-size:0.78rem;">반도체·배터리·화학 기업 연구원, 엔지니어</span></td>
                   <td>① 유체역학·베르누이 정리 기반 도심항공교통(UAM) 형상 설계 ② 차세대 전고체 배터리 리튬이온 전도 메커니즘 ③ 맥스웰 방정식 기반 무선 전력 전송(WPT) 효율 향상 ④ 2계 미분방정식 활용 건축물 제진 장치(TMD) 모델링</td>
-                  <td>『반도체 전쟁』<br>『배터리 전쟁』</td>
+                  <td style="font-size:0.82rem; line-height:1.7;">『파인만의 물리학 강의』<br><span style="color:var(--text-muted);">리처드 파인만</span><br>『배터리 전쟁』<br><span style="color:var(--text-muted);">루카스 베드나르스키</span><br>『반도체 전쟁』<br><span style="color:var(--text-muted);">크리스 밀러</span><br>『엔지니어의 인문학적 시선』<br><span style="color:var(--text-muted);">새뮤얼 플러먼</span></td>
                 </tr>
                 <tr>
                   <td><span class="badge badge-warning">상경</span></td>
                   <td>경영·경제·금융보험·응용통계<br><span style="color:var(--text-muted);font-size:0.78rem;">IB 애널리스트, 펀드매니저, 회계사(CPA)</span></td>
                   <td>① 기준금리 변동이 거시경제 지표에 미치는 파급 경로 실증분석 ② 플랫폼 경제의 네트워크 효과와 락인 전략 사례 ③ 베이즈 정리를 활용한 금융 이상 징후 탐지 모형 ④ 기업 ESG 경영 공시와 재무 성과 간 상관관계</td>
-                  <td>『넛지』<br>『경영학 콘서트』</td>
+                  <td style="font-size:0.82rem; line-height:1.7;">『넛지』<br><span style="color:var(--text-muted);">리처드 탈러</span><br>『죽은 경제학자의 살아있는 아이디어』<br><span style="color:var(--text-muted);">토드 부크홀츠</span><br>『자본주의』<br><span style="color:var(--text-muted);">EBS 자본주의 제작팀</span><br>『경영학 콘서트』<br><span style="color:var(--text-muted);">장영재</span></td>
                 </tr>
                 <tr>
                   <td><span class="badge badge-purple">인문·사회</span></td>
                   <td>행정·정치외교·미디어·심리<br><span style="color:var(--text-muted);font-size:0.78rem;">행정고시, 언론인, 정책분석가, 임상심리전문가</span></td>
                   <td>① 인구절벽·지방소멸 대응 지역 청년정책 효과성 비교 ② 확증편향과 가짜뉴스 확산의 사회심리학적 고찰 ③ 미·중 기술패권 경쟁과 공급망 재편에 따른 외교 대응 ④ 생성형 AI 딥페이크 확산과 초상권·저작권 법제 개선</td>
-                  <td>『정의란 무엇인가』<br>『생각에 관한 생각』</td>
+                  <td style="font-size:0.82rem; line-height:1.7;">『정의란 무엇인가』<br><span style="color:var(--text-muted);">마이클 샌델</span><br>『생각에 관한 생각』<br><span style="color:var(--text-muted);">대니얼 카너먼</span><br>『호모 데우스』<br><span style="color:var(--text-muted);">유발 하라리</span><br>『미디어의 이해』<br><span style="color:var(--text-muted);">마셜 매클루언</span></td>
                 </tr>
                 <tr>
                   <td><span class="badge" style="background:#e0f2fe;color:#075985;">교육(사범)</span></td>
                   <td>초등교육·국어/수학/과학교육<br><span style="color:var(--text-muted);font-size:0.78rem;">정교사(임용고시), 교육청 장학사, 에듀테크 기획자</span></td>
                   <td>① AI 코스웨어 맞춤형 학습이 기초학력 부진 해소에 미치는 영향 ② 수학 불안 해소를 위한 실생활 연계 교수·학습 모형 ③ 디지털 매체 환경의 문해력 저하와 미디어 리터러시 교육 ④ 신경다양성 학생을 위한 보편적 학습 설계(UDL)</td>
-                  <td>『민주주의와 교육』<br>『최고의 교사는 어떻게 가르치는가』</td>
+                  <td style="font-size:0.82rem; line-height:1.7;">『에밀』<br><span style="color:var(--text-muted);">장 자크 루소</span><br>『민주주의와 교육』<br><span style="color:var(--text-muted);">존 듀이</span><br>『티치 라이크 어 챔피언』<br><span style="color:var(--text-muted);">더그 레모브</span><br>『최고의 교사는 어떻게 가르치는가』<br><span style="color:var(--text-muted);">김성효</span></td>
                 </tr>
               </tbody>
             </table>
+          </div>
+          <div class="callout callout-info">
+            <h4><i class="fa-solid fa-book-open-reader"></i> 필독서, 이렇게 읽어야 세특으로 이어집니다</h4>
+            독서는 <strong>권수를 채우는 활동이 아닙니다.</strong> 대학은 "무엇을 읽었나"가 아니라 "읽고 무엇을 했나"를 봅니다.
+            <ol style="margin-left:18px; margin-top:8px; line-height:1.85;">
+              <li><strong>수업 진도와 연결해 읽기</strong> — 교과서에서 배운 개념이 나오는 대목에 표시해 두세요.</li>
+              <li><strong>질문 3개를 남기기</strong> — 읽으며 생긴 의문을 적고, 그중 하나를 탐구 주제로 발전시킵니다.</li>
+              <li><strong>수행평가·발표로 연결하기</strong> — 책에서 출발한 탐구를 보고서로 제출해야 교사가 세특에 기록할 근거가 생깁니다.</li>
+            </ol>
+            ⚠️ 2024학년도 대입부터 <strong>독서활동상황은 대입에 반영되지 않습니다.</strong> 따라서 독서 목록 자체를 채우는 것은 의미가 없고, <strong>교과 세특 안에 탐구의 출발점으로 녹아들 때만</strong> 평가에 반영됩니다.
           </div>
         </div>
       </section>
@@ -1619,6 +1787,12 @@
                   <th>현재 내신</th>
                   <td><input type="text" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;" placeholder="1.85 등급 (5등급제)"></td>
                 </tr>
+                <tr>
+                  <th>상담 일자</th>
+                  <td><input type="date" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;"></td>
+                  <th>담당 멘토 / 회차</th>
+                  <td><input type="text" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;" placeholder="김멘토 / 2차"></td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -1639,12 +1813,62 @@
             <label><input type="checkbox"> 교육 / 사람 돕기 / 상담</label>
             <label><input type="checkbox"> 법 / 정의 / 사회문제 해결</label>
           </div>
-          <p style="font-weight:600; margin-bottom:6px;">내가 잘하는 것 (강점 3가지) / 좋아하는 교과목 TOP 3</p>
-          <textarea style="width: 100%; height: 70px; border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 6px;" placeholder="1. &#10;2. &#10;3."></textarea>
+          <p style="font-weight:600; margin-bottom:6px;">내가 잘하는 것 (강점 3가지)</p>
+          <textarea style="width: 100%; height: 66px; border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 14px;" placeholder="1. &#10;2. &#10;3."></textarea>
+
+          <div class="table-container">
+            <table>
+              <thead><tr><th style="width:22%;">구분</th><th style="width:39%;">교과목</th><th style="width:39%;">그렇게 생각하는 이유</th></tr></thead>
+              <tbody>
+                <tr><th>좋아하는 과목 1위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><th>좋아하는 과목 2위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><th>좋아하는 과목 3위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><th style="color:#991b1b;">어렵거나 싫은 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-weight:600; margin:14px 0 6px;">나를 표현하는 핵심 키워드 5개</p>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px;">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 1">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 2">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 3">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 4">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 5">
+          </div>
         </div>
 
         <div class="card">
-          <div class="card-header"><h3><i class="fa-solid fa-crosshairs text-primary"></i> Part 2. 진로·대학 지원 계획</h3></div>
+          <div class="card-header"><h3><i class="fa-solid fa-crosshairs text-primary"></i> Part 2. 진로 탐색 — 어떤 미래를 그리고 있나?</h3></div>
+
+          <p style="font-weight:600; margin-bottom:6px;">희망 직업 (1~3순위)</p>
+          <div class="table-container">
+            <table>
+              <thead><tr><th style="width:14%;">순위</th><th style="width:30%;">희망 직업</th><th>이 직업을 원하는 이유</th></tr></thead>
+              <tbody>
+                <tr><td><span class="badge badge-danger">1순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><span class="badge badge-primary">2순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><span class="badge badge-success">3순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p style="font-weight:600; margin:16px 0 6px;">희망 학과와 내가 알고 있는 정도</p>
+          <div class="table-container">
+            <table>
+              <thead><tr><th style="width:14%;">순위</th><th style="width:40%;">희망 학과 (또는 계열)</th><th>알고 있는 정도</th></tr></thead>
+              <tbody>
+                <tr><td><span class="badge badge-danger">1순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
+                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
+                <tr><td><span class="badge badge-primary">2순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
+                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
+                <tr><td><span class="badge badge-success">3순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
+                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.8rem; margin-top:6px;">💡 ★★☆☆☆ 이하라면 상담 전에 「학과별 진로·세특 탐구」 섹션에서 그 학과의 졸업 후 진로부터 확인해 보세요.</p>
+
+          <p style="font-weight:600; margin:16px 0 6px;">희망 대학 (상향/적정/안전)</p>
           <div class="table-container">
             <table>
               <thead><tr><th>유형</th><th>희망 대학</th><th>희망 학과</th></tr></thead>
@@ -1655,10 +1879,87 @@
               </tbody>
             </table>
           </div>
+
+          <p style="font-weight:600; margin:16px 0 6px;">10년 후 나의 모습</p>
+          <textarea style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;" rows="3" placeholder="10년 후, 나는 (어디)에서 (무엇)을 하고 있을 것입니다. 내가 이 목표를 이루고 싶은 이유는…"></textarea>
         </div>
 
         <div class="card">
-          <div class="card-header"><h3><i class="fa-solid fa-question text-primary"></i> Part 3. 지금 가장 큰 고민은?</h3></div>
+          <div class="card-header"><h3><i class="fa-solid fa-chart-simple text-primary"></i> Part 3. 현재 학습 현황 — 지금 나의 학업 상태는?</h3></div>
+
+          <p style="font-weight:600; margin-bottom:6px;">학기별 내신 성적 (기억나는 만큼 작성)</p>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>학기</th><th>국어</th><th>수학</th><th>영어</th><th>사회(탐구)</th><th>과학(탐구)</th><th>평균</th></tr></thead>
+              <tbody>
+                <tr><th style="white-space:nowrap;">고1-1</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><th style="white-space:nowrap;">고1-2</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><th style="white-space:nowrap;">고2-1</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><th style="white-space:nowrap;">고2-2</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.8rem; margin-top:6px;">※ 2026학년도 고1·고2는 <strong>5등급제</strong>(1등급 10%, 2등급 24%, 3등급 32%)로 산출됩니다. 융합선택 과목은 등급 없이 성취도(A~E)만 기재하세요.</p>
+
+          <p style="font-weight:600; margin:16px 0 6px;">최근 모의고사(전국연합학력평가) 성적</p>
+          <div class="table-container">
+            <table>
+              <thead><tr><th>응시 시기</th><th>국어</th><th>수학</th><th>영어</th><th>통합사회</th><th>통합과학</th><th>등급 합</th></tr></thead>
+              <tbody>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 고2 6월"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout callout-info" style="margin-top:10px;">
+            <h4><i class="fa-solid fa-circle-info"></i> 2028 통합형 수능 — 응시 과목을 고르지 않습니다</h4>
+            2026학년도 고1·고2가 치를 수능(2028·2029학년도)은 <strong>선택과목이 전면 폐지</strong>되어, 모든 수험생이 <strong>국어(공통) · 수학(대수+미적분Ⅰ+확률과 통계) · 영어(절대평가) · 통합사회 · 통합과학 · 한국사(절대평가)</strong>를 동일하게 응시합니다. 따라서 "확률과 통계 vs 미적분", "생명Ⅰ vs 지구Ⅰ" 같은 <strong>수능 선택과목 고민은 더 이상 필요 없습니다.</strong> 대신 고교에서 어떤 <strong>선택과목</strong>을 이수했는지가 학생부 평가의 핵심 잣대가 됩니다.
+          </div>
+
+          <p style="font-weight:600; margin:16px 0 6px;">현재 선택과목 현황</p>
+          <div class="table-container">
+            <table>
+              <tbody>
+                <tr><th style="width:18%;">고2 수강 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 대수, 확률과 통계, 정보, 물리학, 사회와 문화"></td></tr>
+                <tr><th>고3 수강 예정 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 미적분Ⅱ, 인공지능 수학, 데이터 과학"></td></tr>
+                <tr><th>목표 학과 핵심 권장과목 중 <span style="color:#991b1b;">아직 안 넣은 과목</span></th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="「대학별 전공권장 매트릭스」와 대조해 적어 보세요"></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3><i class="fa-solid fa-person-running text-primary"></i> Part 4. 비교과 활동 현황</h3></div>
+
+          <p style="font-weight:600; margin-bottom:6px;">교내 활동 (동아리, 학생회, 프로젝트 등)</p>
+          <div class="table-container">
+            <table>
+              <thead><tr><th style="width:24%;">활동명</th><th style="width:16%;">기간</th><th style="width:16%;">역할</th><th>주요 활동 내용</th></tr></thead>
+              <tbody>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p style="font-weight:600; margin:16px 0 6px;">진로 관련 독서</p>
+          <div class="table-container">
+            <table>
+              <thead><tr><th style="width:30%;">책 제목</th><th style="width:18%;">저자</th><th style="width:14%;">읽은 시기</th><th>느낀 점 / 이어진 탐구</th></tr></thead>
+              <tbody>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.8rem; margin-top:6px;">💡 독서는 권수보다 <strong>수업·탐구와 이어졌는지</strong>가 중요합니다. 「학과별 진로·세특 탐구」의 계열별 필독서 목록을 참고하세요.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3><i class="fa-solid fa-question text-primary"></i> Part 5. 고민과 궁금한 점</h3></div>
+          <p style="font-weight:600; margin-bottom:6px;">지금 가장 큰 고민은? (해당하는 것 모두 체크)</p>
           <ul class="check-list">
             <li><input type="checkbox"> 희망 학과를 아직 결정하지 못했다</li>
             <li><input type="checkbox"> 선택과목을 잘못 선택한 것 같다</li>
@@ -1666,15 +1967,46 @@
             <li><input type="checkbox"> 수능 최저기준을 맞출 수 있을지 걱정된다</li>
             <li><input type="checkbox"> 전형 유형(학종/교과/논술)을 어떻게 선택해야 할지 모른다</li>
             <li><input type="checkbox"> 지방대와 서울 소재 대학 중 어디를 지원해야 할지 모른다</li>
+            <li><input type="checkbox"> 진로가 바뀌었는데 지금까지의 학생부가 걱정된다</li>
+            <li><input type="checkbox"> 학교에 듣고 싶은 과목이 개설되지 않았다</li>
+            <li><input type="checkbox"> 세특에 무엇을 써야 할지, 어떤 탐구를 해야 할지 모르겠다</li>
           </ul>
+          <p style="font-weight:600; margin:16px 0 6px;">멘토 선생님께 꼭 물어보고 싶은 것</p>
+          <textarea style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;" rows="3" placeholder="Q1. &#10;Q2. &#10;Q3."></textarea>
         </div>
 
         <div class="card">
           <div class="card-header"><h3><i class="fa-solid fa-stethoscope text-primary"></i> 멘토용 — 상담 결과 및 처방 기록</h3></div>
-          <h4 style="margin: 6px 0 8px;">멘토 종합 처방</h4>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">아래 영역은 상담 후 멘토가 기록합니다.</p>
+          <div class="table-container">
+            <table>
+              <tbody>
+                <tr><th style="width:24%;">추천 계열</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 첨단 IT·AI"></td></tr>
+                <tr><th>과목 선택 조정 필요 사항</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 고3-1에 미적분Ⅱ 누락 → 반드시 추가, 기하는 공동교육과정으로 보완"></td></tr>
+                <tr><th>추천 전형 유형</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 학종 3장 + 교과(지역인재) 2장 + 논술 1장"></td></tr>
+                <tr><th>목표 대학 수정 의견</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 상향 1곳을 적정으로 조정 권고"></td></tr>
+                <tr><th>수능 최저 달성 가능성</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 현재 3합 8 → 목표 3합 6, 수학 1등급 진입이 관건"></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h4 style="margin: 16px 0 8px;">멘토 종합 처방</h4>
           <textarea style="width: 100%; height: 90px; border: 1px solid var(--border); border-radius: 6px; padding: 8px;" placeholder="학생의 과목 선택 적합성 및 3대 실천 과제를 기록하세요."></textarea>
-          <h4 style="margin: 14px 0 8px;">다음 상담까지 실천 과제 3개 / 다음 상담 일정</h4>
+          <h4 style="margin: 14px 0 8px;">다음 상담까지 실천 과제 3개</h4>
           <textarea style="width: 100%; height: 70px; border: 1px solid var(--border); border-radius: 6px; padding: 8px;" placeholder="1. &#10;2. &#10;3."></textarea>
+          <div class="table-container" style="margin-top:14px;">
+            <table>
+              <tbody>
+                <tr>
+                  <th style="width:16%;">다음 상담 날짜</th><td style="width:34%;"><input type="date" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
+                  <th style="width:16%;">준비할 것</th><td style="width:34%;"><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 3학년 수강신청 가안, 탐구보고서 1편"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout callout-info" style="margin-top:14px;">
+            <h4><i class="fa-solid fa-print"></i> 인쇄 안내</h4>
+            상단의 <strong>「웹북 인쇄 / PDF 저장」</strong> 버튼을 누르면 이 워크시트를 포함한 전체 핸드북이 인쇄용으로 정리되어 출력됩니다. 워크시트만 필요하면 인쇄 미리보기에서 해당 페이지만 지정해 출력하세요.
+          </div>
         </div>
       </section>
 
@@ -1976,6 +2308,62 @@
       }
     };
 
+    /* 학과 단위 공식 권장과목 — 「대학별 전공권장 매트릭스」와 동일한 출처 */
+    const SIM_MAJORS = [
+      { keys:["의예","의대","의학"], name:"의예과 / 의학과", core:"미적분Ⅱ, 기하, 생명과학, 화학", rec:"세포와 물질대사, 생물의 유전, 화학 반응의 세계, 물리학", note:"서울대 등 주요대는 과학 진로선택 3과목 이상 이수를 권장합니다." },
+      { keys:["치의예","치대","치과"], name:"치의예과", core:"미적분Ⅱ, 생명과학, 화학", rec:"기하, 세포와 물질대사, 화학 반응의 세계, 물리학", note:"의예과와 거의 동일한 이수 수준을 요구합니다." },
+      { keys:["한의예","한의대","한의학"], name:"한의예과", core:"생명과학, 화학, 확률과 통계", rec:"세포와 물질대사, 현대사회와 윤리, 한문", note:"인문/자연 통합 선발 대학이 많아 윤리·철학 소양이 가산됩니다." },
+      { keys:["약학","약대"], name:"약학과", core:"화학, 생명과학, 미적분Ⅱ", rec:"화학 반응의 세계, 물질과 에너지, 세포와 물질대사, 기하", note:"화학 비중이 생명과학과 동등하거나 그 이상으로 중요합니다." },
+      { keys:["수의예","수의대","수의학"], name:"수의예과", core:"생명과학, 화학", rec:"생물의 유전, 세포와 물질대사, 미적분Ⅱ, 기하", note:"동물생리학 연계로 생명과학 심화 이수가 핵심입니다." },
+      { keys:["간호"], name:"간호학과", core:"생명과학, 화학", rec:"확률과 통계, 미적분Ⅰ, 세포와 물질대사, 인간과 심리", note:"통계·심리·윤리 과목을 함께 이수하면 좋은 평가를 받습니다." },
+      { keys:["임상병리","물리치료","작업치료","방사선"], name:"임상병리 / 물리치료", core:"생명과학, 화학", rec:"물리학, 인체와 건강, 확률과 통계", note:"물리치료는 물리학(역학) 연계가 특히 중요합니다." },
+      { keys:["컴퓨터","컴공","소프트웨어","소프트","sw"], name:"컴퓨터공학 / 소프트웨어학", core:"미적분Ⅱ, 확률과 통계, 정보", rec:"기하, 인공지능 수학, 물리학, 인공지능 기초", note:"수학적 역량(미적·기하·확통)이 단순 코딩 경험보다 우선 평가됩니다." },
+      { keys:["인공지능","ai"], name:"인공지능(AI)학과", core:"미적분Ⅱ, 확률과 통계, 인공지능 수학", rec:"기하, 정보, 인공지능 기초, 데이터 과학", note:"선형대수(기하)와 통계학(확통)이 AI 모델링의 핵심 기초입니다." },
+      { keys:["데이터","빅데이터"], name:"데이터사이언스학과", core:"확률과 통계, 미적분Ⅰ, 정보", rec:"미적분Ⅱ, 경제 수학, 데이터 과학, 인공지능 기초", note:"수학·통계 분석력과 프로그래밍의 연계를 보여주세요." },
+      { keys:["보안","정보보호"], name:"사이버보안 / 정보보안", core:"미적분Ⅰ, 확률과 통계, 정보", rec:"미적분Ⅱ, 기하, 이산수학(공동교육과정), 전자기와 양자", note:"암호학을 위한 정수론·이산수학과 네트워크 기초가 중요합니다." },
+      { keys:["전기","전자","전전"], name:"전기전자공학부", core:"미적분Ⅱ, 기하, 물리학", rec:"역학과 에너지, 전자기와 양자, 화학, 인공지능 수학", note:"물리(전자기학)와 미적분Ⅱ가 절대적 평가 기준입니다." },
+      { keys:["반도체"], name:"반도체공학과", core:"미적분Ⅱ, 기하, 물리학, 화학", rec:"전자기와 양자, 물질과 에너지, 역학과 에너지", note:"양자역학·반도체 공정 때문에 물리와 화학을 모두 요구합니다." },
+      { keys:["기계"], name:"기계공학부", core:"미적분Ⅱ, 기하, 물리학", rec:"역학과 에너지, 물질과 에너지, 화학, 창의 공학 설계", note:"4대 역학의 기초가 되는 물리(역학)와 기하를 완주하세요." },
+      { keys:["항공","우주"], name:"항공우주공학과", core:"미적분Ⅱ, 기하, 물리학", rec:"역학과 에너지, 지구시스템과학, 전자기와 양자", note:"유체역학·비행동역학을 위한 심화 물리가 필수입니다." },
+      { keys:["화학공학","화공"], name:"화학공학과", core:"미적분Ⅱ, 화학, 물리학", rec:"화학 반응의 세계, 물질과 에너지, 기하", note:"화학과 물리학의 비중이 5:5 수준으로 요구됩니다." },
+      { keys:["신소재","재료"], name:"신소재공학부", core:"미적분Ⅱ, 물리학, 화학", rec:"물질과 에너지, 화학 반응의 세계, 기하", note:"금속·고분자·세라믹 구조 해석을 위해 물리+화학이 함께 필요합니다." },
+      { keys:["건축","토목","도시공"], name:"건축 / 토목공학", core:"미적분Ⅰ, 기하, 물리학", rec:"미적분Ⅱ, 역학과 에너지, 미술, 공간지리", note:"구조공학(수학·물리)과 디자인(미술)의 융합 역량을 봅니다." },
+      { keys:["수학과","수리"], name:"수학과 / 통계학과", core:"미적분Ⅱ, 기하, 확률과 통계", rec:"인공지능 수학, 경제 수학, 정보, 물리학", note:"수학 전 과목을 이수하고 깊이 탐구한 이력이 핵심입니다." },
+      { keys:["물리학과"], name:"물리학과", core:"미적분Ⅱ, 기하, 물리학", rec:"역학과 에너지, 전자기와 양자, 화학, 수학과제 탐구", note:"이론·응용 물리 대비 심화 수학과 물리를 함께 이수하세요." },
+      { keys:["화학과"], name:"화학과", core:"화학, 미적분Ⅱ", rec:"화학 반응의 세계, 물질과 에너지, 물리학, 기하", note:"유기·무기·물리화학 대비 화학 진로선택 전 과목을 권장합니다." },
+      { keys:["생명과학","생물","생명공"], name:"생명과학과", core:"생명과학, 화학", rec:"세포와 물질대사, 생물의 유전, 화학 반응의 세계, 미적분Ⅱ", note:"생화학·유전공학을 위해 화학과 생명과학을 함께 이수해야 합니다." },
+      { keys:["지구","환경","대기","해양"], name:"지구환경과학과", core:"지구과학, 물리학 또는 화학", rec:"지구시스템과학, 행성우주과학, 기후변화와 환경생태", note:"지구과학뿐 아니라 물리·화학 기초가 필수입니다." },
+      { keys:["경제학"], name:"경제학부", core:"대수, 미적분Ⅰ, 확률과 통계, 경제", rec:"경제 수학, 미적분Ⅱ, 금융과 경제생활, 사회와 문화", note:"문과 중 수학 요구도가 가장 높습니다(미적분Ⅱ 우대)." },
+      { keys:["경영"], name:"경영학과", core:"확률과 통계, 경제, 사회와 문화", rec:"경제 수학, 금융과 경제생활, 미적분Ⅰ, 데이터 과학", note:"정량 데이터 분석력과 조직·마케팅에 대한 사회적 이해를 함께 봅니다." },
+      { keys:["금융","보험"], name:"금융 / 보험학과", core:"확률과 통계, 경제 수학, 경제", rec:"금융과 경제생활, 미적분Ⅰ, 미적분Ⅱ, 실용 통계", note:"금융공학·리스크 관리를 위한 수학 심화가 요구됩니다." },
+      { keys:["통상","무역","국제학"], name:"국제통상 / 무역", core:"경제, 세계지리, 사회와 문화", rec:"국제 관계의 이해, 세계사, 영미 문학 읽기, 제2외국어", note:"글로벌 거시경제와 다문화·국제정치 소양이 중요합니다." },
+      { keys:["통계"], name:"통계 / 응용통계학과", core:"확률과 통계, 대수, 미적분Ⅰ", rec:"미적분Ⅱ, 데이터 과학, 정보, 경제 수학", note:"데이터 분석 및 통계적 추론 역량을 집중 평가합니다." },
+      { keys:["행정"], name:"행정학과", core:"정치, 법과 사회, 사회와 문화", rec:"경제, 사회문제 탐구, 확률과 통계, 현대사회와 윤리", note:"정책 분석을 위한 법·사회 제도 이해와 통계 소양이 필요합니다." },
+      { keys:["정치","외교"], name:"정치외교학과", core:"정치, 법과 사회, 세계사", rec:"국제 관계의 이해, 사회와 문화, 사회문제 탐구", note:"외교안보 및 국제정치 분석 소양을 봅니다." },
+      { keys:["미디어","언론","신문방송","커뮤니케이션"], name:"미디어커뮤니케이션학과", core:"사회와 문화, 독서와 작문", rec:"매체 의사소통, 미디어 영어, 사회문제 탐구, 정보", note:"미디어 리터러시와 콘텐츠 기획 역량이 핵심입니다." },
+      { keys:["심리"], name:"심리학과", core:"사회와 문화, 확률과 통계", rec:"생명과학, 인간과 심리, 윤리문제 탐구, 독서와 작문", note:"인지과학·신경심리를 위해 생명과학과 통계가 함께 필요합니다." },
+      { keys:["사회복지","복지"], name:"사회복지학과", core:"사회와 문화, 현대사회와 윤리", rec:"사회문제 탐구, 확률과 통계, 인간과 심리, 법과 사회", note:"사회문제에 대한 구조적 이해와 데이터 해석력을 함께 보여주세요." },
+      { keys:["초등교육","교대"], name:"초등교육과 (교대)", core:"국·수·영·사·과 전 과목 균형 이수", rec:"인간과 심리, 교육의 이해, 미술, 음악, 체육", note:"특정 과목 편중 없이 전인적으로 고르게 이수해야 합니다." },
+      { keys:["수학교육"], name:"수학교육과", core:"미적분Ⅱ, 기하, 확률과 통계", rec:"수학과제 탐구, 수학과 문화, 교육의 이해", note:"임용 대비로 고교 수학 전 과목 성취도 A가 요구됩니다." },
+      { keys:["국어교육","영어교육","어교육"], name:"국어 / 영어교육과", core:"문학, 독서와 작문, 영어 심화 과목", rec:"언어생활 탐구, 영미 문학 읽기, 교육의 이해", note:"교과 지식의 깊이와 교수·학습 역량을 함께 평가합니다." },
+      { keys:["어문","국문","영문","중문","일문","불문","독문"], name:"어문·인문학 계열", core:"문학, 세계사, 독서와 작문", rec:"제2외국어Ⅰ·Ⅱ, 영미 문학 읽기, 역사로 탐구하는 현대 세계", note:"원전 독해력과 문화적 맥락 이해를 보여주는 탐구가 좋습니다." },
+      { keys:["자유전공","무전공","자율전공"], name:"자유전공 / 무전공", core:"수학 5대 과목 + 기초 과학·사회 균형 이수", rec:"데이터 과학, 융합과학 탐구, 사회문제 탐구", note:"진학 후 어떤 전공도 수학할 수 있는 '학문적 기초 체력'을 보여주는 것이 핵심입니다." }
+    ];
+
+    function findMajor(input) {
+      if (!input) return null;
+      const q = input.replace(/\s|·|,/g, '').toLowerCase();
+      if (q.length < 2) return null;
+      let best = null, bestLen = 0;
+      SIM_MAJORS.forEach(m => {
+        m.keys.forEach(k => {
+          const kk = k.toLowerCase();
+          if (q.indexOf(kk) !== -1 && kk.length > bestLen) { best = m; bestLen = kk.length; }
+        });
+      });
+      return best;
+    }
+
     const SIM_GRADE_BANDS = [
       ["1.0~1.3등급", "최상위권 — 서울대·연세대·고려대 의약학", "최상위 전형 도전", 1],
       ["1.3~1.7등급", "상위권 — SKY 일반학과, 서강·성균관 인기학과", "학종/교과 균형 지원", 2],
@@ -2038,6 +2426,27 @@
       const coreChips = track.core.map(c => `<span class="badge badge-danger" style="margin:2px;">${esc(c)}</span>`).join(' ');
       const recChips = track.recommended.map(c => `<span class="badge badge-primary" style="margin:2px;">${esc(c)}</span>`).join(' ');
 
+      // 입력한 희망 학과를 매트릭스에서 조회
+      const hit = findMajor(major);
+      let majorBlock = '';
+      if (hit) {
+        const hc = hit.core.split(', ').map(c => `<span class="badge badge-danger" style="margin:2px;">${esc(c)}</span>`).join(' ');
+        const hr = hit.rec.split(', ').map(c => `<span class="badge badge-primary" style="margin:2px;">${esc(c)}</span>`).join(' ');
+        majorBlock = `
+          <div class="callout callout-warning" style="border-left-color:#a855f7; background:#faf5ff;">
+            <h4><i class="fa-solid fa-bullseye"></i> 입력하신 「${esc(major)}」 = <strong>${esc(hit.name)}</strong> 기준 공식 권장과목</h4>
+            <p style="margin:8px 0 4px;">🔴 <strong>핵심 권장과목</strong> (미이수 시 서류·교과평가에서 감점): ${hc}</p>
+            <p style="margin:4px 0 8px;">🔵 <strong>권장과목</strong> (이수 시 가산): ${hr}</p>
+            <span style="font-size:0.85rem;">${esc(hit.note)}</span>
+          </div>`;
+      } else if (major) {
+        majorBlock = `
+          <div class="callout callout-info">
+            <h4><i class="fa-solid fa-circle-question"></i> 「${esc(major)}」는 수록된 학과 목록에서 찾지 못했습니다</h4>
+            아래 계열 단위 로드맵을 기준으로 삼되, <strong>「대학별 전공권장 매트릭스」</strong> 섹션에서 가장 가까운 모집단위를 직접 확인하고, 목표 대학 입학처의 「전공 연계 교과이수 권장과목」 공지도 함께 대조하세요.
+          </div>`;
+      }
+
       const nextSteps = grade === '고1'
         ? ["관심 학과 3~5개 탐색 및 계열 최종 결정", "2~3학년 선택과목 예비 수강신청 시 위 로드맵과 대조", "공통과목 내신 1~2등급 확보 및 세특 탐구 습관 만들기"]
         : ["3학년 최종 선택과목 확정 및 누락 권장과목 점검", "진로선택 과목 성취도 A 확보에 집중", "목표 대학 2~3개 구체화(상향/적정/안전) 및 수능 최저 달성 가능성 점검"];
@@ -2048,8 +2457,8 @@
             <h3><i class="fa-solid ${track.icon} text-primary"></i> ${nameLine}${esc(trackKey)} 계열 진로 로드맵 결과</h3>
           </div>
           <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:14px;">대표 학과: ${esc(track.majors)}</p>
-
-          <h4 style="margin:6px 0 8px; color:var(--secondary);"><i class="fa-solid fa-star"></i> 핵심 권장과목 / 권장과목</h4>
+          ${majorBlock}
+          <h4 style="margin:6px 0 8px; color:var(--secondary);"><i class="fa-solid fa-star"></i> ${esc(trackKey)} 계열 공통 핵심 권장과목 / 권장과목</h4>
           <p style="margin-bottom:6px;">🔴 핵심 권장과목: ${coreChips}</p>
           <p style="margin-bottom:14px;">🔵 권장과목: ${recChips}</p>
 
