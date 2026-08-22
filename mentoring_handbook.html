@@ -397,6 +397,13 @@
       margin: 16px 0;
     }
 
+    .sim-tab {
+      background: #f1f5f9; color: #475569; border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 16px; font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; font-family: inherit; transition: all .15s;
+    }
+    .sim-tab:hover { background: #e2e8f0; }
+    .sim-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
     .tree-box {
       background: #0f172a;
       color: #e2e8f0;
@@ -747,12 +754,16 @@
       <section id="sec-simulator" class="section-view">
         <div class="hero-card" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); box-shadow: 0 10px 25px -5px rgba(147,51,234,0.3);">
           <h2><i class="fa-solid fa-wand-magic-sparkles"></i> 나만의 진로 로드맵 시뮬레이터</h2>
-          <p style="color:#ede9fe;">학년·희망 계열·목표 대학/학과·현재 내신을 입력하면, 6학기 과목 로드맵과 지원 전략을 자동으로 생성해 드립니다. 상담 전 학생이 미리 작성해 보거나, 상담 중 멘토와 함께 채워도 좋습니다.</p>
+          <p style="color:#ede9fe;">재학 중인 <strong>학교 지역</strong>을 먼저 설정하면 지역인재·지역의사제 자격이 자동으로 판정됩니다. 이어서 <strong>①계열로 설계 / ②대학으로 찾기 / ③학과로 찾기</strong> 세 가지 방식 중 원하는 것을 고르세요.</p>
         </div>
 
         <div class="card">
-          <div class="card-header"><h3><i class="fa-solid fa-sliders text-primary"></i> 입력하기</h3></div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
+          <div class="card-header"><h3><i class="fa-solid fa-location-dot text-primary"></i> STEP 1. 학생 기본 정보</h3></div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px;">
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">재학 중인 고등학교 지역 <span class="badge badge-danger" style="font-size:0.66rem;">필수</span></label>
+              <select id="sim-region" onchange="renderRegionBrief()" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+            </div>
             <div>
               <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">현재 학년</label>
               <select id="sim-grade" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
@@ -761,26 +772,77 @@
               </select>
             </div>
             <div>
-              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 계열</label>
-              <select id="sim-track" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
-            </div>
-            <div>
               <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">현재 내신 등급대</label>
               <select id="sim-grade-band" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
             </div>
-            <div>
-              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 대학 (선택 입력)</label>
-              <input id="sim-univ" type="text" placeholder="예: 성균관대학교" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
-            </div>
-            <div>
-              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 학과 (선택 입력)</label>
-              <input id="sim-major" type="text" placeholder="예: 컴퓨터공학과" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
-            </div>
           </div>
-          <button class="btn-print" style="margin-top:18px; background:var(--primary); color:#fff; border:none; padding:10px 20px; font-size:0.9rem;" onclick="runSimulation()">
-            <i class="fa-solid fa-play"></i> 시뮬레이션 실행
-          </button>
-          <p style="color:var(--text-muted); font-size:0.78rem; margin-top:10px;">※ 본 시뮬레이터는 핸드북에 수록된 과목선택 로드맵·전공권장 매트릭스·입시결과 데이터를 규칙 기반으로 조합해 보여주는 참고 도구이며, 실제 대학별 요강·수능최저·경쟁률은 매년 바뀝니다. 최종 지원 전략은 반드시 멘토·교사와의 상담과 대학 공식 자료로 확정하세요.</p>
+          <div id="sim-region-brief" style="margin-top:16px;"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3><i class="fa-solid fa-sliders text-primary"></i> STEP 2. 검색 방식 선택</h3></div>
+          <div id="sim-tabs" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px;">
+            <button class="sim-tab active" data-mode="track" onclick="simSetMode('track')"><i class="fa-solid fa-diagram-project"></i> ① 계열로 설계</button>
+            <button class="sim-tab" data-mode="univ" onclick="simSetMode('univ')"><i class="fa-solid fa-building-columns"></i> ② 대학으로 찾기</button>
+            <button class="sim-tab" data-mode="major" onclick="simSetMode('major')"><i class="fa-solid fa-book"></i> ③ 학과·계열로 찾기</button>
+          </div>
+
+          <div id="sim-pane-track" class="sim-pane">
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">계열과 희망 학과를 입력하면 <strong>6학기 과목 로드맵</strong>과 전략을 만들어 줍니다.</p>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
+              <div>
+                <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 계열</label>
+                <select id="sim-track" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+              </div>
+              <div>
+                <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 대학 (선택 입력)</label>
+                <input id="sim-univ" type="text" placeholder="예: 전남대학교" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
+              </div>
+              <div>
+                <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 학과 (선택 입력)</label>
+                <input id="sim-major" type="text" placeholder="예: 컴퓨터공학과" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
+              </div>
+            </div>
+            <button class="btn-print" style="margin-top:18px; background:var(--primary); color:#fff; border:none; padding:10px 20px; font-size:0.9rem;" onclick="runSimulation()">
+              <i class="fa-solid fa-play"></i> 로드맵 생성
+            </button>
+          </div>
+
+          <div id="sim-pane-univ" class="sim-pane" style="display:none;">
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;"><strong>목표 대학 하나를 정하고 그 안에서 학과를 고르는</strong> 방식입니다. 선택한 대학의 모집단위별 합격선을 계열별로 묶어 보여줍니다.</p>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
+              <div>
+                <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">목표 대학</label>
+                <select id="sim-pick-univ" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+              </div>
+              <div>
+                <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">계열 필터</label>
+                <select id="sim-univ-fld" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"><option value="">전체 계열</option></select>
+              </div>
+            </div>
+            <button class="btn-print" style="margin-top:18px; background:var(--primary); color:#fff; border:none; padding:10px 20px; font-size:0.9rem;" onclick="runUnivSearch()">
+              <i class="fa-solid fa-magnifying-glass"></i> 이 대학의 학과 보기
+            </button>
+          </div>
+
+          <div id="sim-pane-major" class="sim-pane" style="display:none;">
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;"><strong>가고 싶은 학과를 먼저 정하고 대학을 비교하는</strong> 방식입니다. 같은 학과를 뽑는 여러 대학의 합격선을 낮은 순으로 정렬해 보여줍니다.</p>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
+              <div>
+                <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">계열</label>
+                <select id="sim-pick-fld" onchange="fillMajorPicker()" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+              </div>
+              <div>
+                <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">모집단위 (학과)</label>
+                <select id="sim-pick-major" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+              </div>
+            </div>
+            <button class="btn-print" style="margin-top:18px; background:var(--primary); color:#fff; border:none; padding:10px 20px; font-size:0.9rem;" onclick="runMajorSearch()">
+              <i class="fa-solid fa-magnifying-glass"></i> 이 학과를 뽑는 대학 비교
+            </button>
+          </div>
+
+          <p style="color:var(--text-muted); font-size:0.78rem; margin-top:14px;">※ 본 시뮬레이터는 핸드북에 수록된 과목선택 로드맵·전공권장 매트릭스·입시결과 데이터를 규칙 기반으로 조합해 보여주는 참고 도구입니다. 각 수치에는 <strong>기준 연도 배지</strong>가 붙어 있으니 반드시 확인하세요. 대학별 요강·수능최저·경쟁률은 매년 바뀌므로, 최종 지원 전략은 멘토·교사 상담과 대학 공식 자료로 확정하세요.</p>
         </div>
 
         <div id="sim-result"></div>
@@ -3068,6 +3130,240 @@
     }
 
     /* ============ 진로 로드맵 시뮬레이터 ============ */
+    /* ============================================================
+       지역 데이터 — 재학 고교 소재지 기준 지역인재·지역의사제 자격 판정
+       출처: 교육부·한국대학교육협의회 「2028 대입 정보 설명회」 자료집(2026.7)
+       ============================================================ */
+    const SIM_REGIONS = {
+      "광주광역시": {
+        zone: "호남권 (광주·전남·전북)",
+        note: "전남광주통합특별시 출범에 따라 행정구역 명칭이 바뀌어도, 대입 지역인재 자격은 <strong>고교 소재 시·도</strong>를 기준으로 판정됩니다.",
+        talentUnivs: ["전남대", "조선대", "전북대", "원광대"],
+        docWide: 33,
+        docLocalOK: false,
+        docLocalNames: "목포권·여수권·순천권·나주권·해남권·영광권",
+        docMsg: "<strong>광주광역시는 전남광주 통합특별시의 6개 진료권(목포·여수·순천·나주·해남·영광) 어디에도 속하지 않습니다.</strong> 따라서 광주 소재 고교 재학생은 <strong>진료권형 43명에는 지원할 수 없고, 광역권 전형에만 지원</strong>할 수 있습니다.",
+        docDetail: "광역권(전남·광주·전북) 배정: 전남대 12명 · 조선대 7명 · 전북대 8명 · 원광대 6명 = <strong>총 33명</strong>",
+        homeUnivs: ["전남대", "조선대"],
+        tip: "전남대 학생부교과 <strong>지역인재</strong>는 광주캠퍼스 실질경쟁률 <strong>2.27:1</strong>로 일반전형(2.27:1)과 비슷하지만, <strong>수능최저 충족률이 훨씬 높아</strong>(공과대 78.1% vs 62.0%, 자연과학대 88.8% vs 76.7%) 실질적으로 유리합니다."
+      },
+      "전라남도": {
+        zone: "호남권 (광주·전남·전북)",
+        note: "전남 소재 고교는 지역인재와 지역의사제 진료권형에 <strong>모두</strong> 지원할 수 있어 가장 유리한 위치입니다.",
+        talentUnivs: ["전남대", "조선대", "전북대", "원광대"],
+        docWide: 33, docLocalOK: true,
+        docLocalNames: "목포권(목포·영암·무안·함평·진도·신안) / 여수권(여수) / 순천권(순천·광양·구례·고흥·보성) / 나주권(나주·곡성·화순) / 해남권(장흥·강진·해남·완도) / 영광권(담양·영광·장성)",
+        docMsg: "전남 소재 고교는 <strong>진료권형 + 광역권 모두 지원 가능</strong>합니다. 다만 진료권형은 <strong>중학교와 고등학교가 같은 진료권</strong>이어야 합니다.",
+        docDetail: "진료권 배정: 순천권 15 · 목포권 12 · 나주권 5 · 해남권 5 · 여수권 3 · 영광권 3명 (+ 광역권 19명)",
+        homeUnivs: ["전남대", "조선대"],
+        tip: "진료권 단위는 3~15명 규모라 한 해 결과의 진폭이 큽니다. 지역의사제 하나만 믿지 말고 <strong>지역인재 교과·학종을 주력</strong>으로 두세요."
+      },
+      "전라북도": {
+        zone: "호남권 (광주·전남·전북)",
+        note: "전북 소재 고교는 전북대·원광대 진료권형과 호남권 지역인재에 모두 지원할 수 있습니다.",
+        talentUnivs: ["전북대", "원광대", "전남대", "조선대"],
+        docWide: 33, docLocalOK: true,
+        docLocalNames: "전주권(전주·김제·완주·진안·무주) / 군산권(군산) / 익산권(익산) / 정읍권(정읍·고창·부안) / 남원권(남원·장수·임실·순창)",
+        docMsg: "전북 소재 고교는 <strong>진료권형 + 광역권 모두 지원 가능</strong>합니다.",
+        docDetail: "진료권 배정: 전주권 20 · 정읍권 4 · 남원권 4 · 군산권 3 · 익산권 3명 (+ 광역권 14명)",
+        homeUnivs: ["전북대"],
+        tip: "전북대 의예과 2026 지역인재는 90명(전체 142명 중 63.4%)으로 규모가 큽니다."
+      },
+      "대구·경북": {
+        zone: "대구·경북권",
+        note: "경북대·계명대·대구가톨릭대·동국대(WISE)·영남대 지역인재에 지원할 수 있습니다.",
+        talentUnivs: ["경북대"],
+        docWide: 26, docLocalOK: true,
+        docLocalNames: "포항권 / 경주권 / 안동권 / 구미권 / 영주권 / 상주권",
+        docMsg: "대구광역시 소재 고교는 <strong>광역권만</strong> 지원 가능하고, 경북 시·군 소재 고교는 <strong>진료권형도</strong> 지원할 수 있습니다.",
+        docDetail: "총 90명 — 광역권 26 · 구미권 18 · 경주권 16 · 포항권 13 · 안동권 6 · 영주권 6 · 상주권 5명",
+        homeUnivs: ["경북대"],
+        tip: "경북대는 2028부터 <strong>학생부교과에 교과이수충실도 20%</strong>가 들어가고 <strong>정시도 수능 90 + 교과 10</strong>으로 바뀝니다. 교과전형이라도 과목 선택을 신경 써야 합니다."
+      },
+      "부산·울산·경남": {
+        zone: "부산·울산·경남권",
+        note: "부산대·경상국립대·동아대·인제대·고신대·울산대 지역인재에 지원할 수 있습니다.",
+        talentUnivs: ["부산대", "경상국립대"],
+        docWide: 35, docLocalOK: true,
+        docLocalNames: "창원권 / 진주권 / 통영권 / 김해권 / 거창권",
+        docMsg: "부산·울산 소재 고교는 <strong>광역권만</strong>, 경남 시·군 소재 고교는 <strong>진료권형도</strong> 지원할 수 있습니다.",
+        docDetail: "총 121명 — 광역권 35 · 창원권 29 · 김해권 25 · 진주권 16 · 통영권 10 · 거창권 6명 (전국 최대 규모)",
+        homeUnivs: ["부산대", "경상국립대"],
+        tip: "<strong>부산대 논술전형은 2028학년도부터 폐지</strong>됩니다. 지원 계획에서 빼세요."
+      },
+      "대전·세종·충남": {
+        zone: "충청권", note: "충남대·건양대·단국대(천안)·순천향대·을지대 지역인재에 지원할 수 있습니다.",
+        talentUnivs: ["충남대", "충북대"],
+        docWide: null, docLocalOK: true, docLocalNames: "천안권 / 서산권 / 논산권 / 홍성권",
+        docMsg: "충남대는 지역의사제를 <strong>학생부종합Ⅱ</strong>로 선발합니다(진료권 21명 + 광역권 10명).",
+        docDetail: "충남대 총 31명 — 천안 7 · 서산 6 · 논산 4 · 홍성 4 · 광역권(대전·세종·충남·충북) 10명",
+        homeUnivs: ["충남대"],
+        tip: "충남대 정시는 <strong>수능 80 + 학생부 20</strong>입니다. 정시를 노려도 내신을 버릴 수 없습니다."
+      },
+      "충북": {
+        zone: "충청권", note: "충북대·건국대(글로컬) 지역인재에 지원할 수 있습니다.",
+        talentUnivs: ["충북대", "충남대"],
+        docWide: null, docLocalOK: true, docLocalNames: "청주권 / 충주권 / 제천권",
+        docMsg: "충북대 지역의사제는 <strong>수시 학생부교과 33명 + 정시 수능 16명 = 총 49명</strong>으로 규모가 큽니다.",
+        docDetail: "충북대 수시 — 청주권 16 · 충주권 5 · 제천권 2 · 광역권 10명 / 정시(수능 100) 16명",
+        homeUnivs: ["충북대"],
+        tip: "충북대 교과성적은 <strong>석차등급 × 성취도 합산</strong>입니다. 2등급 A(9.0)가 1등급 D(6.5)보다 높으니 원점수(성취도 A = 90점 이상)를 함께 챙기세요."
+      },
+      "강원": {
+        zone: "강원권", note: "강원대·연세대(미래)·한림대·가톨릭관동대 지역인재에 지원할 수 있습니다.",
+        talentUnivs: ["강원대"], docWide: null, docLocalOK: true, docLocalNames: "강원권 진료권",
+        docMsg: "강원권 지역의사제 배정 현황은 대학별 모집요강으로 확인하세요.",
+        docDetail: "강원대 의예과 2026 지역인재 30명 / 전체 49명 (61.2%)",
+        homeUnivs: ["강원대"],
+        tip: "강원대 의예과 지역인재 2026 교과 70%컷은 1.02등급으로, 2025년(1.24)보다 크게 올랐습니다."
+      },
+      "제주": {
+        zone: "제주권", note: "제주대 지역인재에 지원할 수 있습니다.",
+        talentUnivs: ["제주대"], docWide: null, docLocalOK: false, docLocalNames: "—",
+        docMsg: "제주대 의예과 지역인재는 2026학년도 21명(전체 40명 중 52.5%)입니다.",
+        docDetail: "제주 지역 학생은 경쟁 모집단위가 적은 만큼, 육지 대학 <strong>일반전형</strong>과 병행 설계가 필요합니다.",
+        homeUnivs: ["제주대"],
+        tip: "제주대 2026 수시 경쟁률은 4.88:1로 지거국 중 가장 낮습니다. 안정 카드로 활용 가치가 큽니다."
+      },
+      "수도권 (서울·경기·인천)": {
+        zone: "수도권",
+        note: "수도권 고교는 <strong>의약학 지역인재 전형에 지원할 수 없습니다.</strong> 대신 서울 주요대 지역균형·학교장추천 전형이 주력 카드입니다.",
+        talentUnivs: [], docWide: null, docLocalOK: false, docLocalNames: "—",
+        docMsg: "<strong>지역의사제는 비수도권 고교 출신만 지원할 수 있습니다.</strong> 수도권 고교 재학생은 대상이 아닙니다.",
+        docDetail: "대신 <strong>서울대 지역균형전형이 2028학년도부터 719명(205명 증원)으로 확대</strong>되고 <strong>수능최저가 폐지</strong>되며 <strong>일반고로 지원자격이 한정</strong>됩니다. 일반고 재학생에게는 가장 큰 기회입니다.",
+        homeUnivs: [],
+        tip: "경북대·부산대 등 지거국은 <strong>지역인재가 아닌 일반전형</strong>으로 지원 가능합니다. 안정 카드로 검토하세요."
+      }
+    };
+
+    /* ============================================================
+       대학 × 모집단위 합격선 DB
+       yr: 자료 기준 연도 / avg: 평균등급 / cut: 70%컷
+       ============================================================ */
+    const SIM_DB = [
+      /* ---- 전남대학교 (2026학년도 확정, 학생부교과, 광주캠퍼스) ---- */
+      ["전남대","의약학","의학과","교과(지역인재)","1.09","1.12",2026],
+      ["전남대","의약학","치의학과","교과(일반)","1.24","1.32",2026],
+      ["전남대","의약학","치의학과","교과(지역인재)","1.22","1.27",2026],
+      ["전남대","의약학","약학부","교과(일반)","1.38","1.62",2026],
+      ["전남대","의약학","약학부","교과(지역인재)","1.23","1.31",2026],
+      ["전남대","의약학","수의예과","교과(일반)","1.28","1.28",2026],
+      ["전남대","의약학","수의예과","교과(지역인재)","1.32","1.38",2026],
+      ["전남대","의약학","간호학과","교과(일반)","1.78","1.94",2026],
+      ["전남대","의약학","간호학과","교과(지역인재)","1.84","1.96",2026],
+      ["전남대","전통 공학","전기공학과","교과(일반)","1.56","1.64",2026],
+      ["전남대","전통 공학","전기공학과","교과(지역인재)","1.58","1.63",2026],
+      ["전남대","전통 공학","건축학부","교과(일반)","3.96","3명 이하",2026],
+      ["전남대","자연과학","식품영양과학부","교과(일반)","2.22","2.77",2026],
+      ["전남대","자연과학","생물공학과","교과(지역인재)","2.41","2.32",2026],
+      ["전남대","자연과학","원예생명공학과","교과(지역인재)","2.46","2.58",2026],
+      ["전남대","자연과학","물리학과","교과(일반)","3.70","3.74",2026],
+      ["전남대","자연과학","지구환경과학부","교과(지역인재)","3.57","3.73",2026],
+      ["전남대","자연과학","수학과","교과(지역인재)","3.58","3.58",2026],
+      ["전남대","교육(사범)","수학교육과","교과(일반)","2.22","2.51",2026],
+      ["전남대","교육(사범)","영어교육과","교과(일반)","2.22","3명 이하",2026],
+      ["전남대","교육(사범)","영어교육과","교과(지역인재)","2.30","2.44",2026],
+      ["전남대","교육(사범)","윤리교육과","교과(일반)","2.28","3명 이하",2026],
+      ["전남대","교육(사범)","윤리교육과","교과(지역인재)","2.40","2.61",2026],
+      ["전남대","교육(사범)","국어교육과","교과(일반)","2.48","2.72",2026],
+      ["전남대","교육(사범)","유아교육과","교과(지역인재)","3.52","3명 이하",2026],
+      ["전남대","교육(사범)","물리교육과","교과(일반)","3.77","3.84",2026],
+      ["전남대","교육(사범)","물리교육과","교과(지역인재)","3.63","3.93",2026],
+      ["전남대","인문·사회","심리학과","교과(지역인재)","2.25","3명 이하",2026],
+      ["전남대","인문·사회","불어불문학과","교과(일반)","3.66","3.75",2026],
+      ["전남대","인문·사회","불어불문학과","교과(지역인재)","3.58","3.67",2026],
+      ["전남대","인문·사회","일어일문학과","교과(일반)","3.71","3.88",2026],
+      ["전남대","인문·사회","미디어커뮤니케이션학과","교과(지역인재)","3.87","3명 이하",2026],
+      ["전남대","상경","농업경제학과","교과(일반)","3.58","3명 이하",2026],
+
+      /* ---- 지역거점 국립대 의예과 지역인재 (2026 확정) ---- */
+      ["강원대","의약학","의예과","교과(지역인재)",null,"1.02",2026],
+      ["충북대","의약학","의예과","교과(지역인재)",null,"1.05",2026],
+      ["부산대","의약학","의예과","교과(지역인재)",null,"1.07",2026],
+      ["충남대","의약학","의예과","교과(지역인재)",null,"1.13",2026],
+      ["경북대","의약학","의예과","교과(지역인재)",null,"1.15",2026],
+
+      /* ---- 지거국 기타 학과 (이전 연도 참고) ---- */
+      ["부산대","의약학","간호학과","교과",null,"2.0~2.2",2025],
+      ["부산대","상경","경영학부","교과",null,"2.4~2.6",2025],
+      ["부산대","첨단 IT·AI","컴퓨터공학","교과",null,"2.0~2.2",2025],
+      ["경북대","의약학","간호학과","교과",null,"2.0등급 초반",2025],
+      ["경북대","상경","경영학부","교과",null,"2.3~2.5",2025],
+      ["경북대","첨단 IT·AI","컴퓨터학부","교과",null,"2.42",2025],
+      ["전북대","의약학","간호학과","교과",null,"2.77",2025],
+      ["전북대","상경","경영학부","교과",null,"3.73",2025],
+      ["전북대","첨단 IT·AI","컴퓨터공학","교과",null,"3.5~3.9",2025],
+      ["충남대","의약학","간호학과","교과",null,"2.2~2.4",2025],
+      ["충남대","상경","경영학부","교과",null,"2.5~3.0",2025],
+      ["충남대","첨단 IT·AI","컴퓨터공학","교과",null,"2.6~2.9",2025],
+      ["충북대","의약학","간호학과","교과",null,"2.15",2025],
+      ["충북대","상경","경영학부","교과",null,"2.90",2025],
+      ["충북대","첨단 IT·AI","컴퓨터공학","교과",null,"3.50",2025],
+      ["강원대","의약학","간호학과","교과",null,"2.60",2025],
+      ["강원대","상경","경영학부","교과",null,"3.3~3.4",2025],
+      ["강원대","첨단 IT·AI","컴퓨터공학","교과",null,"3.9~4.0",2025],
+      ["제주대","의약학","간호학과","교과",null,"3.35",2025],
+      ["제주대","상경","경영학부","교과(지역인재)",null,"4.41",2025],
+      ["제주대","첨단 IT·AI","데이터사이언스","교과",null,"5.96",2025],
+
+      /* ---- 서울 주요대 (70%컷) ---- */
+      ["서울대","의약학","의예과","수시",null,"1.11",2026],
+      ["서울대","인문·사회","정치외교학부","수시",null,"1.21",2026],
+      ["서울대","상경","경제학부","수시",null,"1.11",2026],
+      ["연세대","의약학","의예과","교과(추천형)",null,"1.01",2026],
+      ["연세대","의약학","약학과","교과(추천형)",null,"1.04",2026],
+      ["연세대","상경","경영학과","교과(추천형)",null,"1.27",2026],
+      ["연세대","전통 공학","전기전자공학부","교과(추천형)",null,"1.26",2026],
+      ["고려대","의약학","의과대학","학종",null,"1.27",2026],
+      ["고려대","첨단 IT·AI","컴퓨터학과","학종",null,"1.89",2026],
+      ["고려대","전통 공학","전기전자공학부","학종",null,"1.96",2026],
+      ["고려대","상경","경영대학","학종",null,"2.54",2026],
+      ["성균관대","의약학","의예과","학교장추천",null,"1.56",2026],
+      ["성균관대","전통 공학","전자전기공학부","학교장추천",null,"1.52",2026],
+      ["성균관대","상경","경영학과","학교장추천",null,"1.48",2026],
+      ["성균관대","첨단 IT·AI","소프트웨어학과","학교장추천",null,"3.53",2026],
+      ["서강대","전통 공학","화공생명공학과","교과(지역균형)",null,"1.31",2026],
+      ["서강대","첨단 IT·AI","컴퓨터공학과","교과(지역균형)",null,"1.44",2026],
+      ["서강대","상경","경영학부","교과(지역균형)",null,"1.50",2026],
+      ["서강대","상경","경제학과","교과(지역균형)",null,"1.63",2026],
+      ["한양대","의약학","의예과","교과(추천형)",null,"1.51",2026],
+      ["한양대","첨단 IT·AI","컴퓨터소프트웨어학부","교과(추천형)",null,"2.41",2026],
+      ["한양대","상경","경영학부","교과(추천형)",null,"1.67",2026],
+      ["중앙대","의약학","의학부","논술",null,"1.24",2026],
+      ["중앙대","첨단 IT·AI","소프트웨어학부","수시",null,"1.72",2026],
+      ["중앙대","의약학","간호학과","수시",null,"1.89",2026],
+      ["중앙대","상경","경영학부","수시",null,"2.18",2026],
+      ["한국외대","인문·사회","LT학부(언어AI)","수시",null,"2.32",2025],
+      ["한국외대","상경","경영학부","수시",null,"2.4등급대",2025],
+      ["서울시립대","첨단 IT·AI","전자전기컴퓨터공학부","교과(지역균형)",null,"1.72",2025],
+      ["서울시립대","전통 공학","신소재공학과","교과(지역균형)",null,"1.77",2025],
+      ["서울시립대","상경","경제학부","교과(지역균형)",null,"1.93",2025],
+      ["서울시립대","인문·사회","행정학과","교과(지역균형)",null,"1.97",2025]
+    ];
+
+    /* 대학 부가 정보 — 2028 전형 계획 및 지역 구분 */
+    const SIM_UNIV_INFO = {
+      "전남대":   { reg:"호남권", plan:"수시 4,801명(83.6%) : 정시 803명(16.4%) · 교과 100%(정성평가 없음) · 학종 진로40/학업30/공동체30 · 논술 미실시 · 정시 수능 100%", conv:"5등급 환산 1등급 100 / 2등급 90 / 3등급 80 / 4등급 70 / 5등급 0점, 진로·융합선택은 성취도 A~E를 5/4/3/2/1점으로 반영" },
+      "경북대":   { reg:"대구·경북권", plan:"수시 4,552명(81.5%) : 정시 1,034명(18.5%) · 교과 80% + 교과이수충실도 20%(신설) · 논술 AAT 551명 · 정시 수능 90% + 교과 10%", conv:"5등급 환산 1등급 400 / 2등급 380 / 3등급 360 / 4등급 300 / 5등급 0점 (정시는 100/99/97/94/0)" },
+      "충북대":   { reg:"충청권", plan:"수시 2,702명(82.1%) : 정시 559명(17.0%) · 교과 100% · 학종 학업적 61점(76.2%) + 사회적 19점(23.8%) · 지역의사제 49명", conv:"석차등급 × 성취도 합산 — 1등급A 10.0 / 2등급A 9.0 / 1등급D 6.5 → 2등급 A가 1등급 D보다 높음" },
+      "경상국립대": { reg:"부산·울산·경남권", plan:"수시 3,779명(81.3%) : 정시 870명(18.7%) · 의·약·수의 교과 80% + 정성평가 20% · 학종 지식탐구45/진로25/자기주도20/공동체10 · 지역의사제 28명", conv:"수능최저 완화 — 미적용 모집단위 다수, 2합(5~10등급)·3합(12등급) 등 유형 다양" },
+      "서울대":   { reg:"수도권", plan:"지역균형 719명(205명 증원) · 고교별 추천 3명 · 수능최저 폐지 · 지원자격 일반고 한정 · 정시 수능 100 + 교과역량평가 40(1,107명)", conv:"전공 연계 권장과목 이수 여부를 수시 서류평가·정시 교과역량평가에 반영" },
+      "한양대":   { reg:"수도권", plan:"수시 66.8% : 정시 33.2% · 교과(추천형) 506명 = 교과 60 + 종합 40(정성평가 신설) · 학종 면접형 266명 신설 · 논술 289명 · 정시 수능 90 + 종합 10", conv:"정시 학생부평가 = 계열적합성 70점 + 학교생활성실도 30점 (내신 등급 미반영). 지원자의 96~97%가 A" },
+      "부산대":   { reg:"부산·울산·경남권", plan:"논술전형 2028학년도 폐지", conv:"" },
+      "충남대":   { reg:"충청권", plan:"정시 수능 80% + 학생부 20% · 지역의사제 학생부종합Ⅱ 31명", conv:"" },
+      "강원대":   { reg:"강원권", plan:"의예과 지역인재 30명 / 전체 49명(61.2%)", conv:"" },
+      "전북대":   { reg:"호남권", plan:"의예과 지역인재 90명 / 전체 142명(63.4%) · 지역의사제 학생부 100%(수 포함 3개 합 6, 과탐)", conv:"" },
+      "제주대":   { reg:"제주권", plan:"의예과 지역인재 21명 / 전체 40명(52.5%) · 2026 수시 경쟁률 4.88:1", conv:"" },
+      "조선대":   { reg:"호남권", plan:"지역의사제 24명(광역권 7 + 진료권 17) · 학생부 100%(수 포함 3개 합 6, 과탐)", conv:"" },
+      "연세대":   { reg:"수도권", plan:"정시 정성평가 10점 신설", conv:"" },
+      "고려대":   { reg:"수도권", plan:"정시 수능 80 + 교과 20 (489명)", conv:"" },
+      "성균관대": { reg:"수도권", plan:"정시 특화형 전형 신설", conv:"" },
+      "서강대":   { reg:"수도권", plan:"정시 수능-지역균형 전형 신설 · 논술 출결 10점 반영 신설", conv:"" },
+      "중앙대":   { reg:"수도권", plan:"정시 수능 67 + 서류 33 · 정성평가 33점 · 출결 10→11점 강화 · 논술 반영 70→80", conv:"" },
+      "한국외대": { reg:"수도권", plan:"논술 수능최저 완화 (2합 4 → 2합 5)", conv:"" },
+      "서울시립대": { reg:"수도권", plan:"정시 교과 18점 반영 신설 · 출결 2점 신설 · 논술 반영 80→100, 수능최저 3합 7 신설", conv:"" }
+    };
+
     const SIM_TRACKS = {
       "의약학": {
         icon: "fa-house-medical",
@@ -3255,10 +3551,263 @@
       4: "사례 4 (진로 변경·성적 정체, 3.5~4.5등급): 스토리텔링 재해석 + 수시 포기 금지, 중위권 학종·지거국 교과 조합"
     };
 
+    /* ===== 지역 브리핑 ===== */
+    function renderRegionBrief() {
+      const el = document.getElementById('sim-region-brief');
+      if (!el) return;
+      const key = document.getElementById('sim-region').value;
+      const R = SIM_REGIONS[key];
+      if (!R) { el.innerHTML = ''; return; }
+
+      const talent = R.talentUnivs.length
+        ? `<p style="margin:6px 0;">✅ <strong>지역인재 전형 지원 가능</strong> — ${esc(R.zone)}<br>
+             <span style="font-size:0.88rem;">주요 지원 가능 대학: <strong>${R.talentUnivs.map(esc).join(' · ')}</strong> 등</span></p>`
+        : `<p style="margin:6px 0;">❌ <strong>의약학 지역인재 전형 지원 불가</strong> — ${esc(R.zone)}</p>`;
+
+      const docBadge = R.docLocalOK
+        ? `<span class="badge badge-success">진료권형 + 광역권 모두 가능</span>`
+        : `<span class="badge badge-danger">진료권형 불가 — 광역권만</span>`;
+
+      el.innerHTML = `
+        <div class="callout callout-info" style="border-left-color:#a855f7; background:#faf5ff;">
+          <h4><i class="fa-solid fa-map-location-dot"></i> ${esc(key)} 고교 재학생 기준 자격 판정</h4>
+          <p style="margin:6px 0; font-size:0.88rem;">${R.note}</p>
+          ${talent}
+          <p style="margin:10px 0 4px;">🩺 <strong>지역의사제</strong> ${docBadge}</p>
+          <p style="margin:4px 0; font-size:0.88rem;">${R.docMsg}</p>
+          <p style="margin:4px 0; font-size:0.88rem;">📊 ${R.docDetail}</p>
+          <p style="margin:4px 0 0; font-size:0.88rem;"><strong>진료권 구성:</strong> ${esc(R.docLocalNames)}</p>
+          <p style="margin:10px 0 0; font-size:0.88rem; padding-top:8px; border-top:1px dashed #d8b4fe;">💡 ${R.tip}</p>
+        </div>`;
+    }
+
+    /* ===== 탭 전환 ===== */
+    function simSetMode(mode) {
+      ['track','univ','major'].forEach(m => {
+        const pane = document.getElementById('sim-pane-' + m);
+        if (pane) pane.style.display = (m === mode) ? '' : 'none';
+      });
+      document.querySelectorAll('#sim-tabs .sim-tab').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-mode') === mode);
+      });
+      const r = document.getElementById('sim-result');
+      if (r) r.innerHTML = '';
+    }
+
+    /* ===== 공통 헬퍼 ===== */
+    const F_U=0, F_FLD=1, F_M=2, F_ADM=3, F_AVG=4, F_CUT=5, F_YR=6;
+
+    function yrBadge(y) {
+      return y >= 2026
+        ? `<span class="badge badge-success" style="font-size:0.66rem;">${y} 확정</span>`
+        : `<span class="badge badge-warning" style="font-size:0.66rem;">${y} 참고</span>`;
+    }
+    function isLocalTalent(adm) { return adm.indexOf('지역인재') !== -1; }
+
+    /* 등급 문자열 → 숫자(정렬용). 범위·문자열은 첫 숫자 사용 */
+    function cutNum(s) {
+      if (!s) return 99;
+      const m = String(s).match(/\d+\.?\d*/);
+      return m ? parseFloat(m[0]) : 99;
+    }
+
+    /* 내신 등급대 → 대표 숫자. 범위면 중앙값을 사용 */
+    function bandNum(label) {
+      const m = String(label).match(/\d+\.?\d*/g);
+      if (!m || !m.length) return 9;
+      const nums = m.map(parseFloat);
+      return nums.reduce((x, y) => x + y, 0) / nums.length;
+    }
+
+    /* 합격 가능성 판정 */
+    function verdict(cut, myBand) {
+      const c = cutNum(cut), b = bandNum(myBand);
+      if (c === 99) return ['—', '#f1f5f9', '#475569'];
+      const d = c - b;                      // 양수면 내 등급이 컷보다 좋음
+      if (d >= 0.5)  return ['안정', '#d1fae5', '#065f46'];
+      if (d >= 0.0)  return ['적정', '#dbeafe', '#1e40af'];
+      if (d >= -0.5) return ['소신', '#fef3c7', '#92400e'];
+      return ['상향', '#fee2e2', '#991b1b'];
+    }
+
+    /* ===== ② 대학으로 찾기 ===== */
+    function runUnivSearch() {
+      const u = document.getElementById('sim-pick-univ').value;
+      const fldFilter = document.getElementById('sim-univ-fld').value;
+      const region = document.getElementById('sim-region').value;
+      const myBand = document.getElementById('sim-grade-band').value;
+      const R = SIM_REGIONS[region];
+      const info = SIM_UNIV_INFO[u] || {};
+
+      let rows = SIM_DB.filter(r => r[F_U] === u);
+      if (fldFilter) rows = rows.filter(r => r[F_FLD] === fldFilter);
+
+      const canTalent = R && R.talentUnivs.indexOf(u) !== -1;
+
+      /* 계열별로 묶기 */
+      const byFld = {};
+      rows.forEach(r => { (byFld[r[F_FLD]] = byFld[r[F_FLD]] || []).push(r); });
+
+      let body = '';
+      Object.keys(byFld).forEach(f => {
+        const list = byFld[f].slice().sort((a,b) => cutNum(a[F_CUT]) - cutNum(b[F_CUT]));
+        body += `<h4 style="margin:18px 0 8px; color:var(--secondary);"><i class="fa-solid fa-folder-open"></i> ${esc(f)} 계열</h4>
+          <div class="table-container"><table>
+            <thead><tr><th>모집단위</th><th>전형</th><th>평균등급</th><th>70%컷</th><th>기준</th><th>내 위치</th></tr></thead><tbody>`;
+        list.forEach(r => {
+          const talentRow = isLocalTalent(r[F_ADM]);
+          const blocked = talentRow && !canTalent;
+          const [vTxt, vBg, vFg] = blocked ? ['지원 불가', '#fee2e2', '#991b1b'] : verdict(r[F_CUT], myBand);
+          body += `<tr${blocked ? ' style="opacity:.55;"' : ''}>
+            <td><strong>${esc(r[F_M])}</strong></td>
+            <td>${esc(r[F_ADM])}${talentRow && canTalent ? ' <span class="badge badge-success" style="font-size:0.62rem;">지원 가능</span>' : ''}</td>
+            <td>${r[F_AVG] ? esc(r[F_AVG]) : '—'}</td>
+            <td><strong>${esc(r[F_CUT])}</strong></td>
+            <td>${yrBadge(r[F_YR])}</td>
+            <td><span class="badge" style="background:${vBg}; color:${vFg};">${vTxt}</span></td>
+          </tr>`;
+        });
+        body += `</tbody></table></div>`;
+      });
+
+      if (!rows.length) {
+        body = `<div class="callout callout-info"><h4><i class="fa-solid fa-circle-question"></i> 수록된 모집단위 데이터가 없습니다</h4>
+          ${esc(u)}의 학과별 합격선은 아직 신뢰할 수 있는 출처로 확인하지 못해 수록하지 않았습니다. 해당 대학 입학처의 「입학전형 결과」 공시 자료를 직접 확인하세요.</div>`;
+      }
+
+      const talentBox = canTalent
+        ? `<div class="callout callout-success"><h4><i class="fa-solid fa-star"></i> ${esc(region)} 학생은 ${esc(u)} 지역인재 전형에 지원할 수 있습니다</h4>
+             위 표에서 <strong>「지역인재」 표시가 붙은 전형</strong>이 여러분이 쓸 수 있는 카드입니다. 일반전형보다 <strong>수능최저 충족률이 높아</strong> 실질 경쟁이 완화되는 경우가 많습니다.</div>`
+        : (SIM_UNIV_INFO[u] && R && R.talentUnivs.length
+            ? `<div class="callout callout-warning"><h4><i class="fa-solid fa-triangle-exclamation"></i> ${esc(region)} 학생은 ${esc(u)} 지역인재에 지원할 수 없습니다</h4>
+                 ${esc(u)}는 <strong>${esc(info.reg || '타 권역')}</strong> 대학이므로, 여러분은 <strong>일반전형으로만</strong> 지원할 수 있습니다. 위 표의 「지역인재」 행은 참고용입니다.</div>`
+            : '');
+
+      document.getElementById('sim-result').innerHTML = `
+        <div class="card" style="border:2px solid #a855f7;">
+          <div class="card-header"><h3><i class="fa-solid fa-building-columns text-primary"></i> ${esc(u)} — 모집단위별 합격선</h3></div>
+          <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:12px;">
+            소재 권역: <strong>${esc(info.reg || '—')}</strong> &nbsp;|&nbsp; 내 지역: <strong>${esc(region)}</strong> &nbsp;|&nbsp; 내 내신: <strong>${esc(myBand)}</strong>
+          </p>
+          ${talentBox}
+          ${info.plan ? `<div class="callout callout-info"><h4><i class="fa-solid fa-flag-checkered"></i> ${esc(u)} 2028학년도 전형 운영 계획</h4><p style="margin:6px 0;">${esc(info.plan)}</p>${info.conv ? `<p style="margin:6px 0 0; font-size:0.88rem;"><strong>성적 반영 방식:</strong> ${esc(info.conv)}</p>` : ''}</div>` : ''}
+          ${body}
+          <p style="color:var(--text-muted); font-size:0.8rem; margin-top:12px;">💡 <strong>「내 위치」 판정 기준</strong> — 선택한 내신 등급대의 <strong>중앙값</strong>(예: 1.7~2.5등급이면 2.1)과 70%컷을 비교합니다. 내 등급이 컷보다 <strong>0.5등급 이상 여유 있으면 안정</strong>, 0~0.5 여유면 <strong>적정</strong>, 0~0.5 부족하면 <strong>소신</strong>, 그보다 부족하면 <strong>상향</strong>입니다. 등급대 폭이 넓으므로 <strong>참고 지표일 뿐</strong>이며, 실제 합격 여부는 전형 방법·수능최저·경쟁률·모집인원에 따라 크게 달라집니다.</p>
+        </div>`;
+      document.getElementById('sim-result').scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    /* ===== ③ 학과·계열로 찾기 ===== */
+    function runMajorSearch() {
+      const fld = document.getElementById('sim-pick-fld').value;
+      const mj  = document.getElementById('sim-pick-major').value;
+      const region = document.getElementById('sim-region').value;
+      const myBand = document.getElementById('sim-grade-band').value;
+      const R = SIM_REGIONS[region];
+
+      let rows = (mj === '__ALL__')
+        ? SIM_DB.filter(r => r[F_FLD] === fld)
+        : SIM_DB.filter(r => r[F_M] === mj);
+
+      rows = rows.slice().sort((a,b) => cutNum(a[F_CUT]) - cutNum(b[F_CUT]));
+
+      const title = (mj === '__ALL__') ? `${fld} 계열 전체` : mj;
+
+      let openRows = '', blockedRows = '';
+      rows.forEach(r => {
+        const talentRow = isLocalTalent(r[F_ADM]);
+        const canTalent = R && R.talentUnivs.indexOf(r[F_U]) !== -1;
+        const blocked = talentRow && !canTalent;
+        const [vTxt, vBg, vFg] = verdict(r[F_CUT], myBand);
+        const info = SIM_UNIV_INFO[r[F_U]] || {};
+        const html = `<tr>
+            <td><strong>${esc(r[F_U])}</strong><br><span style="font-size:0.76rem; color:var(--text-muted);">${esc(info.reg || '')}</span></td>
+            <td>${esc(r[F_M])}</td>
+            <td>${esc(r[F_ADM])}</td>
+            <td>${r[F_AVG] ? esc(r[F_AVG]) : '—'}</td>
+            <td><strong>${esc(r[F_CUT])}</strong></td>
+            <td>${yrBadge(r[F_YR])}</td>
+            <td><span class="badge" style="background:${vBg}; color:${vFg};">${vTxt}</span></td>
+          </tr>`;
+        if (blocked) blockedRows += html; else openRows += html;
+      });
+
+      const head = `<thead><tr><th>대학</th><th>모집단위</th><th>전형</th><th>평균등급</th><th>70%컷</th><th>기준</th><th>내 위치</th></tr></thead>`;
+
+      let body = '';
+      if (openRows) {
+        body += `<h4 style="margin:16px 0 8px; color:var(--success);"><i class="fa-solid fa-circle-check"></i> ${esc(region)} 학생이 지원할 수 있는 전형</h4>
+          <div class="table-container"><table>${head}<tbody>${openRows}</tbody></table></div>`;
+      }
+      if (blockedRows) {
+        body += `<h4 style="margin:20px 0 8px; color:var(--text-muted);"><i class="fa-solid fa-circle-minus"></i> 지원 자격이 없는 타 권역 지역인재 전형 (참고용)</h4>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:6px;">아래는 다른 권역 학생만 지원할 수 있는 전형입니다. <strong>같은 학과라도 지역에 따라 합격선이 얼마나 다른지</strong> 비교하는 용도로만 참고하세요.</p>
+          <div class="table-container"><table>${head}<tbody style="opacity:.6;">${blockedRows}</tbody></table></div>`;
+      }
+      if (!openRows && !blockedRows) {
+        body = `<div class="callout callout-info"><h4><i class="fa-solid fa-circle-question"></i> 수록된 데이터가 없습니다</h4>
+          해당 모집단위의 합격선은 아직 신뢰할 수 있는 출처로 확인하지 못했습니다. 「계열로 설계」 탭에서 과목 로드맵을 먼저 확인하고, 목표 대학 입학처 공시 자료로 합격선을 확인하세요.</div>`;
+      }
+
+      /* 학과 권장과목 매칭 */
+      const hit = (mj !== '__ALL__') ? findMajor(mj) : null;
+      let subjBox = '';
+      if (hit) {
+        const hc = hit.core.split(', ').map(c => `<span class="badge badge-danger" style="margin:2px;">${esc(c)}</span>`).join(' ');
+        const hr = hit.rec.split(', ').map(c => `<span class="badge badge-primary" style="margin:2px;">${esc(c)}</span>`).join(' ');
+        subjBox = `<div class="callout callout-warning" style="border-left-color:#a855f7; background:#faf5ff;">
+          <h4><i class="fa-solid fa-book-open-reader"></i> ${esc(hit.name)} 공식 권장과목</h4>
+          <p style="margin:8px 0 4px;">🔴 <strong>핵심 권장과목</strong> (개설되면 우선 이수 권장): ${hc}</p>
+          <p style="margin:4px 0 8px;">🔵 <strong>권장과목</strong> (이수 시 가산): ${hr}</p>
+          <span style="font-size:0.85rem;">${esc(hit.note)}</span></div>`;
+      }
+
+      let homeBox = '';
+      if (R && R.homeUnivs.length && R.talentUnivs.length) {
+        homeBox = `<div class="callout callout-success"><h4><i class="fa-solid fa-house"></i> ${esc(region)} 학생의 지역 거점 대학</h4>
+             <strong>${R.homeUnivs.map(esc).join(' · ')}</strong> — 이 대학들은 여러분이 <strong>지역인재 전형</strong>을 쓸 수 있는 곳입니다. 같은 학과라도 일반전형보다 유리한 경우가 많으니 위 표에서 먼저 확인하세요.</div>`;
+      } else if (R && !R.talentUnivs.length) {
+        homeBox = `<div class="callout callout-warning"><h4><i class="fa-solid fa-triangle-exclamation"></i> ${esc(region)} 학생은 지역인재 전형을 쓸 수 없습니다</h4>
+             아래 표의 <strong>「지역인재」 전형은 모두 비수도권 고교 출신만</strong> 지원할 수 있습니다. 여러분은 <strong>일반전형</strong>으로 지원하게 되므로, 같은 대학·학과라도 합격선이 더 높아질 수 있다는 점을 감안하세요. 대신 <strong>서울대 지역균형(2028부터 719명·수능최저 폐지·일반고 한정)</strong> 등 학교장추천 계열 전형이 주력 카드입니다.</div>`;
+      }
+
+      document.getElementById('sim-result').innerHTML = `
+        <div class="card" style="border:2px solid #a855f7;">
+          <div class="card-header"><h3><i class="fa-solid fa-book text-primary"></i> ${esc(title)} — 대학별 합격선 비교</h3></div>
+          <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:12px;">
+            내 지역: <strong>${esc(region)}</strong> &nbsp;|&nbsp; 내 내신: <strong>${esc(myBand)}</strong> &nbsp;|&nbsp; 합격선이 낮은 순으로 정렬
+          </p>
+          ${homeBox}
+          ${subjBox}
+          ${body}
+          <p style="color:var(--text-muted); font-size:0.8rem; margin-top:12px;">💡 <strong>대학마다 전형 방법이 다릅니다.</strong> 같은 70%컷이라도 교과전형(내신 100%)과 학종(정성평가)은 준비 방향이 완전히 다릅니다. 「② 대학으로 찾기」에서 각 대학의 2028 전형 운영 계획을 확인하세요.</p>
+        </div>`;
+      document.getElementById('sim-result').scrollIntoView({ behavior:'smooth', block:'start' });
+    }
+
+    /* ===== 셀렉트 채우기 ===== */
+    function fillMajorPicker() {
+      const fld = document.getElementById('sim-pick-fld').value;
+      const sel = document.getElementById('sim-pick-major');
+      sel.innerHTML = '';
+      const all = document.createElement('option');
+      all.value = '__ALL__'; all.textContent = `▸ ${fld} 계열 전체 보기`;
+      sel.appendChild(all);
+      const seen = {};
+      SIM_DB.filter(r => r[F_FLD] === fld).forEach(r => {
+        if (seen[r[F_M]]) return;
+        seen[r[F_M]] = 1;
+        const o = document.createElement('option');
+        o.value = r[F_M]; o.textContent = r[F_M];
+        sel.appendChild(o);
+      });
+    }
+
     function initSimulator() {
       const trackSel = document.getElementById('sim-track');
-      const bandSel = document.getElementById('sim-grade-band');
+      const bandSel  = document.getElementById('sim-grade-band');
       if (!trackSel || trackSel.options.length) return;
+
       Object.keys(SIM_TRACKS).forEach(key => {
         const opt = document.createElement('option');
         opt.value = key; opt.textContent = key;
@@ -3269,6 +3818,38 @@
         opt.value = band[0]; opt.textContent = band[0];
         bandSel.appendChild(opt);
       });
+
+      /* 지역 — 광주광역시가 첫 번째(기본 선택) */
+      const regSel = document.getElementById('sim-region');
+      Object.keys(SIM_REGIONS).forEach(k => {
+        const o = document.createElement('option');
+        o.value = k; o.textContent = k;
+        regSel.appendChild(o);
+      });
+
+      /* 대학 목록 — 데이터가 있는 대학 + 정보만 있는 대학 */
+      const univSel = document.getElementById('sim-pick-univ');
+      const univs = [];
+      SIM_DB.forEach(r => { if (univs.indexOf(r[F_U]) === -1) univs.push(r[F_U]); });
+      Object.keys(SIM_UNIV_INFO).forEach(u => { if (univs.indexOf(u) === -1) univs.push(u); });
+      univs.forEach(u => {
+        const o = document.createElement('option');
+        o.value = u; o.textContent = u + (SIM_UNIV_INFO[u] ? ' (' + SIM_UNIV_INFO[u].reg + ')' : '');
+        univSel.appendChild(o);
+      });
+
+      /* 계열 목록 */
+      const flds = [];
+      SIM_DB.forEach(r => { if (flds.indexOf(r[F_FLD]) === -1) flds.push(r[F_FLD]); });
+      const fldFilter = document.getElementById('sim-univ-fld');
+      const fldPick   = document.getElementById('sim-pick-fld');
+      flds.forEach(f => {
+        const a = document.createElement('option'); a.value = f; a.textContent = f; fldFilter.appendChild(a);
+        const b = document.createElement('option'); b.value = f; b.textContent = f; fldPick.appendChild(b);
+      });
+
+      fillMajorPicker();
+      renderRegionBrief();
     }
 
     function esc(s) {
@@ -3322,6 +3903,23 @@
           </div>`;
       }
 
+      /* 재학 지역 기반 추가 전략 */
+      const regionKey = (document.getElementById('sim-region') || {}).value;
+      const R = SIM_REGIONS[regionKey];
+      let regionBlock = '';
+      if (R) {
+        const talentLine = R.talentUnivs.length
+          ? `<strong>${R.talentUnivs.map(esc).join(' · ')}</strong> 지역인재 전형에 지원할 수 있습니다.`
+          : `의약학 지역인재 전형에는 지원할 수 없습니다. 대신 <strong>서울대 지역균형(2028부터 719명·수능최저 폐지·일반고 한정)</strong> 등 학교장추천 계열 전형이 주력 카드입니다.`;
+        regionBlock = `
+          <div class="callout callout-success">
+            <h4><i class="fa-solid fa-map-location-dot"></i> ${esc(regionKey)} 재학생 맞춤 전략</h4>
+            <p style="margin:6px 0;">${talentLine}</p>
+            <p style="margin:6px 0;">🩺 <strong>지역의사제</strong>: ${R.docLocalOK ? '진료권형 + 광역권 모두 지원 가능' : '<strong style="color:var(--danger);">진료권형 지원 불가 — 광역권만 가능</strong>'}</p>
+            <p style="margin:6px 0 0; font-size:0.88rem;">💡 ${R.tip}</p>
+          </div>`;
+      }
+
       const nextSteps = grade === '고1'
         ? ["관심 학과 3~5개 탐색 및 계열 최종 결정", "2~3학년 선택과목 예비 수강신청 시 위 로드맵과 대조", "공통과목 내신 1~2등급 확보 및 세특 탐구 습관 만들기"]
         : ["3학년 최종 선택과목 확정 및 누락 권장과목 점검", "진로선택 과목 성취도 A 확보에 집중", "목표 대학 2~3개 구체화(상향/적정/안전) 및 수능 최저 달성 가능성 점검"];
@@ -3354,6 +3952,8 @@
             <h4><i class="fa-solid fa-lightbulb"></i> 전략 팁</h4>
             ${esc(track.tip)}
           </div>
+
+          ${regionBlock}
 
           <div class="callout callout-success">
             <h4><i class="fa-solid fa-user-graduate"></i> 참고할 만한 상담 사례</h4>
