@@ -4070,6 +4070,22 @@
       });
     }
 
+    /* 계열 그룹 — 상담 사례 매칭용 */
+    const TRACK_GROUP = {
+      "의약학": "med", "첨단 IT·AI": "eng", "전통 공학": "eng",
+      "상경": "hum", "인문·사회": "hum", "교육(사범)": "edu", "예체능": "art"
+    };
+
+    /* 계열과 등급대를 함께 보고 가장 가까운 상담 사례를 고른다 */
+    function pickCase(trackKey, bandIdx) {
+      const g = TRACK_GROUP[trackKey];
+      if (g === "art") return null;                 // 예체능은 대응 사례 없음
+      if (bandIdx >= 4) return 4;                   // 3.5등급 이상은 계열 무관 공통 사례
+      if (g === "med") return 1;
+      if (g === "eng") return 2;
+      return 3;                                     // 상경 · 인문·사회 · 교육
+    }
+
     function initSimulator() {
       const trackSel = document.getElementById('sim-track');
       const bandSel  = document.getElementById('sim-grade-band');
@@ -4132,7 +4148,12 @@
 
       const track = SIM_TRACKS[trackKey];
       const band = SIM_GRADE_BANDS.find(b => b[0] === bandLabel) || SIM_GRADE_BANDS[0];
-      const caseText = SIM_CASES[band[3]];
+      const caseNo = pickCase(trackKey, band[3]);
+      const caseText = caseNo ? SIM_CASES[caseNo] : null;
+      /* 사례가 상정한 등급대와 학생의 등급대가 다르면 그대로 밝힌다 */
+      const caseBandNote = (caseNo && caseNo !== band[3])
+        ? `<p style="margin:8px 0 0; font-size:0.82rem; color:var(--text-muted);">※ 이 사례는 <strong>${esc(trackKey)} 계열</strong>에 가장 가까워 골랐지만, 사례가 상정한 내신 구간은 현재 선택하신 <strong>${esc(bandLabel)}</strong>과 다릅니다. <strong>과목 이수·세특 전략의 뼈대만 참고</strong>하시고, 지원 대학군은 위 「목표 대학군」 안내를 기준으로 삼으세요.</p>`
+        : '';
 
       const nameLine = (univ || major)
         ? `<strong>${esc(univ || '희망 대학')} ${esc(major || '희망 학과')}</strong> 지원을 목표로 한 `
@@ -4177,12 +4198,31 @@
       if (R) {
         const talentLine = R.talentUnivs.length
           ? `<strong>${R.talentUnivs.map(esc).join(' · ')}</strong> 지역인재 전형에 지원할 수 있습니다.`
-          : `의약학 지역인재 전형에는 지원할 수 없습니다. 대신 <strong>서울대 지역균형(2028부터 719명·수능최저 폐지·일반고 한정)</strong> 등 학교장추천 계열 전형이 주력 카드입니다.`;
+          : `비수도권 지역인재 전형에는 지원할 수 없습니다. 대신 <strong>서울대 지역균형(2028부터 719명·수능최저 폐지·일반고 한정)</strong> 등 학교장추천 계열 전형이 주력 카드입니다.`;
+
+        /* 지역의사제는 의약학 계열에만 해당 */
+        const docLine = (trackKey === '의약학')
+          ? `<p style="margin:6px 0;">🩺 <strong>지역의사제</strong>: ${R.docLocalOK ? '진료권형 + 광역권 모두 지원 가능' : '<strong style="color:var(--danger);">진료권형 지원 불가 — 광역권만 가능</strong>'}</p>`
+          : '';
+
+        /* 이 계열에서 실제로 쓸 수 있는 지역인재 전형이 있는지 데이터로 확인 */
+        let trackTalentLine = '';
+        if (trackKey !== '의약학') {
+          const hits = SIM_DB.filter(r =>
+            r[F_FLD] === trackKey && isLocalTalent(r[F_ADM]) && canApply(r[F_U], r[F_ADM], R));
+          const us = [];
+          hits.forEach(r => { if (us.indexOf(r[F_U]) === -1) us.push(r[F_U]); });
+          trackTalentLine = us.length
+            ? `<p style="margin:6px 0;">🎓 <strong>${esc(trackKey)} 계열에도 지역인재 전형이 있습니다</strong> — 수록된 자료 기준 <strong>${us.map(esc).join(' · ')}</strong>. 지역인재는 의약학 전용이 아닙니다. 「② 대학으로 찾기」에서 학과별 합격선을 확인하세요.</p>`
+            : `<p style="margin:6px 0;">🎓 지역인재 전형은 <strong>의약학 계열뿐 아니라 일반 학과에도 운영</strong>됩니다. 다만 ${esc(trackKey)} 계열은 수록된 자료에 해당 사례가 없으니, 목표 대학 모집요강에서 직접 확인하세요.</p>`;
+        }
+
         regionBlock = `
           <div class="callout callout-success">
-            <h4><i class="fa-solid fa-map-location-dot"></i> ${esc(regionKey)} 재학생 맞춤 전략</h4>
+            <h4><i class="fa-solid fa-map-location-dot"></i> ${esc(regionKey)} 재학생 · ${esc(trackKey)} 계열 맞춤 전략</h4>
             <p style="margin:6px 0;">${talentLine}</p>
-            <p style="margin:6px 0;">🩺 <strong>지역의사제</strong>: ${R.docLocalOK ? '진료권형 + 광역권 모두 지원 가능' : '<strong style="color:var(--danger);">진료권형 지원 불가 — 광역권만 가능</strong>'}</p>
+            ${docLine}
+            ${trackTalentLine}
             <p style="margin:6px 0 0; font-size:0.88rem;">💡 ${R.tip}</p>
           </div>`;
       }
@@ -4222,11 +4262,17 @@
 
           ${regionBlock}
 
+          ${caseText ? `
           <div class="callout callout-success">
             <h4><i class="fa-solid fa-user-graduate"></i> 참고할 만한 상담 사례</h4>
             ${esc(caseText)}<br>
-            <span style="font-size:0.82rem;">${esc(track.caseHint)}</span>
-          </div>
+            <span style="font-size:0.82rem;">추가 참고 — ${esc(track.caseHint)}</span>
+            ${caseBandNote}
+          </div>` : `
+          <div class="callout callout-info">
+            <h4><i class="fa-solid fa-user-graduate"></i> 참고할 만한 상담 사례</h4>
+            <span style="font-size:0.9rem;">${esc(track.caseHint)}</span>
+          </div>`}
 
           <h4 style="margin:16px 0 8px; color:var(--secondary);"><i class="fa-solid fa-list-check"></i> 다음 학기까지 실천 과제 3개</h4>
           <ol style="margin-left:18px; line-height:1.8;">
