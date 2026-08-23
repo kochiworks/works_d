@@ -657,7 +657,7 @@
                 <tr style="background:#fffbeb;">
                   <td><span class="badge" style="background:#fef3c7;color:#92400e;">✨ NEW</span></td>
                   <td><strong>진로 로드맵 시뮬레이터</strong></td>
-                  <td>희망 대학·학과·내신을 입력하면 나만의 6학기 과목 로드맵과 지원 전략을 즉시 생성</td>
+                  <td>학기·지역·계열을 입력하면 <strong>이번 학기 결정 마감 → 남은 학기 과목 설계 → 수업·학교생활 중점</strong> 순서로 개인 설계서를 생성 (지원 대학군은 참고용으로 하단 배치)</td>
                   <td><button class="badge badge-warning" onclick="switchSection('sec-simulator')">체험하기</button></td>
                 </tr>
                 <tr>
@@ -754,7 +754,7 @@
       <section id="sec-simulator" class="section-view">
         <div class="hero-card" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%); box-shadow: 0 10px 25px -5px rgba(147,51,234,0.3);">
           <h2><i class="fa-solid fa-wand-magic-sparkles"></i> 나만의 진로 로드맵 시뮬레이터</h2>
-          <p style="color:#ede9fe;">재학 중인 <strong>학교 지역</strong>을 먼저 설정하면 지역인재·지역의사제 자격이 자동으로 판정됩니다. 이어서 <strong>①계열로 설계 / ②대학으로 찾기 / ③학과로 찾기</strong> 세 가지 방식 중 원하는 것을 고르세요.</p>
+          <p style="color:#ede9fe;">고1·2 상담의 목적은 지금 지원 가능한 대학을 찾는 것이 아니라, <strong>진로에 맞는 과목을 제때 신청하고 학교생활의 중점을 잡는 것</strong>입니다. 이 도구는 <strong>학기별 결정 마감 → 과목 설계 → 수업·활동 중점 → (참고) 목표 대학군</strong> 순서로 안내합니다.</p>
         </div>
 
         <div class="card">
@@ -765,10 +765,12 @@
               <select id="sim-region" onchange="renderRegionBrief()" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
             </div>
             <div>
-              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">현재 학년</label>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">현재 학년·학기</label>
               <select id="sim-grade" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;">
-                <option value="고1">고등학교 1학년</option>
-                <option value="고2">고등학교 2학년</option>
+                <option value="고1-1">고1 1학기 — 탐색기</option>
+                <option value="고1-2">고1 2학기 — 선택과목 1차 결정</option>
+                <option value="고2-1">고2 1학기 — 실행·보완</option>
+                <option value="고2-2">고2 2학기 — 3학년 수강신청 최종 확정</option>
               </select>
             </div>
             <div>
@@ -796,7 +798,7 @@
           </div>
 
           <div id="sim-pane-track" class="sim-pane">
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">계열과 희망 학과를 입력하면 <strong>6학기 과목 로드맵</strong>과 전략을 만들어 줍니다.</p>
+            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">계열과 희망 학과를 입력하면 <strong>지금 학기에 결정해야 할 것</strong>부터 <strong>남은 학기 과목 설계</strong>, <strong>수업·학교생활 중점</strong>까지 순서대로 만들어 줍니다. 진로를 아직 못 정했다면 계열에서 <strong>「진로 미결정」</strong>을 고르세요.</p>
             <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;">
               <div>
                 <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">희망 계열</label>
@@ -4042,9 +4044,47 @@
                  ${esc(u)}는 <strong>${esc(info.reg || '타 권역')}</strong> 대학이므로, 여러분은 <strong>일반전형으로만</strong> 지원할 수 있습니다. 위 표의 「지역인재」 행은 참고용입니다.</div>`
             : '');
 
+      /* 이 대학이 원하는 학생 — 평가요소를 행동으로 번역 */
+      const G = SIM_UNIV_GUIDE[u];
+      const wRows = G ? G.w.map(x => `<tr><td><strong>${esc(x[0])}</strong></td><td>${esc(x[1])}</td></tr>`).join('') : '';
+      const guideBlock = G ? `
+          <div class="callout callout-success">
+            <h4><i class="fa-solid fa-bullseye"></i> ${esc(u)}가 보는 것 — 그래서 지금 무엇을 준비해야 하나</h4>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; align-items:start;">
+              <div>
+                <p style="margin:0 0 6px; font-weight:600;">학생부종합 평가요소 배점</p>
+                <div class="table-container"><table><tbody>${wRows}</tbody></table></div>
+              </div>
+              <div>
+                <p style="margin:0 0 6px;">🎯 <strong>평가에 대응하는 행동</strong></p>
+                <p style="margin:0 0 10px; font-size:0.92rem;">${G.act}</p>
+                <p style="margin:0 0 6px;">📘 <strong>과목 선택에서 유의할 점</strong></p>
+                <p style="margin:0; font-size:0.92rem;">${G.subj}</p>
+              </div>
+            </div>
+          </div>` : '';
+
+      /* 선택한 계열의 권장과목 — 대학 검색에서도 과목을 바로 보여준다 */
+      let subjBlock = '';
+      const fldForSubj = fldFilter || (rows.length ? rows[0][F_FLD] : '');
+      const tKey = Object.keys(SIM_TRACKS).indexOf(fldForSubj) !== -1 ? fldForSubj : null;
+      if (tKey) {
+        const tr = SIM_TRACKS[tKey];
+        const cc = tr.core.map(c => `<span class="badge badge-danger" style="margin:2px;">${esc(c)}</span>`).join(' ');
+        const rc = tr.recommended.map(c => `<span class="badge badge-primary" style="margin:2px;">${esc(c)}</span>`).join(' ');
+        subjBlock = `
+          <div class="callout callout-warning" style="border-left-color:#a855f7; background:#faf5ff;">
+            <h4><i class="fa-solid fa-book-open-reader"></i> ${esc(tKey)} 계열 지원을 준비한다면 — 지금 신청할 과목</h4>
+            <p style="margin:8px 0 4px;">🔴 <strong>핵심 권장과목</strong> (개설되면 우선 이수): ${cc}</p>
+            <p style="margin:4px 0 8px;">🔵 <strong>권장과목</strong> (이수 시 가산): ${rc}</p>
+            <p style="margin:6px 0 0; font-size:0.9rem;">${esc(tr.tip)}</p>
+            <p style="margin:8px 0 0; font-size:0.86rem; color:var(--text-muted);">💡 학과 단위 권장과목은 <strong>「③ 학과·계열로 찾기」</strong>에서 모집단위를 고르면 확인할 수 있습니다.</p>
+          </div>`;
+      }
+
       document.getElementById('sim-result').innerHTML = `
         <div class="card" style="border:2px solid #a855f7;">
-          <div class="card-header"><h3><i class="fa-solid fa-building-columns text-primary"></i> ${esc(u)} — 모집단위별 합격선</h3></div>
+          <div class="card-header"><h3><i class="fa-solid fa-building-columns text-primary"></i> ${esc(u)} — 준비 방향과 모집단위별 합격선</h3></div>
           <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:12px;">
             소재 권역: <strong>${esc(info.reg || '—')}</strong> &nbsp;|&nbsp; 내 지역: <strong>${esc(region)}</strong> &nbsp;|&nbsp; 내 내신: <strong>${esc(myBand)}</strong>
           </p>
@@ -4055,6 +4095,10 @@
           </div>
           ${talentBox}
           ${info.plan ? `<div class="callout callout-info"><h4><i class="fa-solid fa-flag-checkered"></i> ${esc(u)} 2028학년도 전형 운영 계획</h4><p style="margin:6px 0;">${esc(info.plan)}</p>${info.conv ? `<p style="margin:6px 0 0; font-size:0.88rem;"><strong>성적 반영 방식:</strong> ${esc(info.conv)}</p>` : ''}</div>` : ''}
+          ${guideBlock}
+          ${subjBlock}
+          <h4 style="margin:22px 0 8px; color:var(--secondary); padding-top:14px; border-top:2px solid var(--border);"><i class="fa-solid fa-binoculars"></i> 아래는 <strong>참고용 합격선</strong>입니다</h4>
+          <p style="color:var(--text-muted); font-size:0.86rem; margin:0 0 12px;">고1·2가 지금 이 숫자에 맞춰 지원 여부를 결정할 필요는 없습니다. <strong>학과 간 상대적 난이도</strong>를 가늠하는 용도로만 보세요.</p>
           ${body}
           <p style="color:var(--text-muted); font-size:0.8rem; margin-top:12px;">💡 <strong>「내 위치」 판정 기준</strong> — 선택한 내신 등급대의 <strong>중앙값</strong>(예: 1.7~2.5등급이면 2.1)과 70%컷을 비교합니다. 내 등급이 컷보다 <strong>0.5등급 이상 여유 있으면 안정</strong>, 0~0.5 여유면 <strong>적정</strong>, 0~0.5 부족하면 <strong>소신</strong>, 그보다 부족하면 <strong>상향</strong>입니다. 등급대 폭이 넓으므로 <strong>참고 지표일 뿐</strong>이며, 실제 합격 여부는 전형 방법·수능최저·경쟁률·모집인원에 따라 크게 달라집니다.</p>
         </div>`;
@@ -4181,6 +4225,84 @@
       });
     }
 
+    /* ============================================================
+       학기별 의사결정 타임라인 — 고1·2 상담의 핵심은 '마감이 있는 결정'
+       ============================================================ */
+    const SIM_TIMELINE = [
+      { key:"고1-1", label:"고1 1학기 (3~8월)", phase:"탐색기",
+        due:null,
+        dueText:"이 학기에는 되돌릴 수 없는 마감이 없습니다. 대신 <strong>다음 학기의 큰 결정을 준비하는 유일한 시간</strong>입니다.",
+        must:[
+          "<strong>학교 교육과정 편성표를 지금 받아 두세요.</strong> 우리 학교가 3년간 어떤 과목을 개설하는지 모르면 어떤 계획도 세울 수 없습니다.",
+          "관심 계열 2~3개를 <strong>좁히지 말고 넓게</strong> 탐색하세요. 고1-2에 결정하면 늦지 않습니다.",
+          "공통과목(공통수학·공통국어·통합사회·통합과학) 내신을 확보하세요. <strong>1학년 성적은 3년 내내 따라다닙니다.</strong>",
+          "수업 중 생긴 질문을 메모하는 습관을 만드세요. 세특의 재료는 이때부터 쌓입니다."
+        ],
+        risk:"편성표를 안 보고 지내다 고1-2 수강신청 때 <strong>원하는 과목이 개설되지 않는다는 걸 그제야 알게 되는</strong> 경우가 가장 흔합니다." },
+
+      { key:"고1-2", label:"고1 2학기 (9~2월)", phase:"1차 결정기",
+        due:"2·3학년 선택과목 예비 수강신청",
+        dueText:"<strong>이번 학기에 2·3학년 선택과목의 뼈대가 정해집니다.</strong> 학교마다 시기는 다르지만 대개 11~12월에 예비 수강신청을 받습니다.",
+        must:[
+          "<strong>목표 학과의 권장과목과 학교 편성표를 나란히 놓고 대조하세요.</strong> 이 작업을 안 하고 신청하면 3학년 때 되돌릴 수 없습니다.",
+          "학교에 없는 권장과목은 <strong>공동교육과정·온라인학교로 대체 가능한지</strong> 지금 확인하세요. 신청 시기가 정해져 있습니다.",
+          "선택군(택1)에서 두 과목이 충돌하는지 확인하고, 우선순위를 정하세요.",
+          "전공 관련 탐구보고서 1~2편과 독서 3권으로 <strong>관심의 근거</strong>를 남기세요."
+        ],
+        risk:"권장과목을 확인하지 않고 <strong>'등급 잘 나올 것 같은 과목'</strong>으로 골랐다가, 고3에 지원 학과의 핵심 과목이 비어 있는 것을 발견하는 경우입니다. 2028부터는 교과전형에도 이수 내역이 평가되므로 더 치명적입니다." },
+
+      { key:"고2-1", label:"고2 1학기 (3~8월)", phase:"실행·보완기",
+        due:"공동교육과정 신청 · 위계(선수과목) 점검",
+        dueText:"선택한 과목을 <strong>실제로 잘 해내는</strong> 것이 이번 학기의 과제입니다. 동시에 부족한 부분을 메울 수 있는 마지막 여유 시간이기도 합니다.",
+        must:[
+          "<strong>선수과목 위계를 확인하세요.</strong> 예를 들어 미적분Ⅱ를 3학년에 들으려면 미적분Ⅰ을 먼저 이수해야 합니다. 순서가 꼬이면 3학년에 못 듣습니다.",
+          "학교 미개설 과목을 <strong>공동교육과정(주말·온라인)</strong>으로 신청하세요. 학기 초가 신청 시기입니다.",
+          "일반선택 과목의 <strong>내신과 성취도를 동시에</strong> 챙기세요. 충북대처럼 등급×성취도를 합산하는 대학이 있습니다.",
+          "교과 연계 심화 탐구를 <strong>발표까지</strong> 이어가세요. 교사가 관찰해야 세특에 남습니다."
+        ],
+        risk:"위계를 몰라 3학년 심화과목을 들을 수 없게 되는 경우, 그리고 공동교육과정 신청 시기를 놓쳐 <strong>1년을 기다려야 하는</strong> 경우입니다." },
+
+      { key:"고2-2", label:"고2 2학기 (9~2월)", phase:"최종 확정기",
+        due:"3학년 최종 수강신청 확정 — 되돌릴 수 없음",
+        dueText:"<strong>고교 3년의 과목 이수 이력이 이번 학기에 최종 확정됩니다.</strong> 이후에는 어떤 방법으로도 바꿀 수 없습니다.",
+        must:[
+          "<strong>지망 학과의 핵심 권장과목이 3년 계획에 모두 들어 있는지 최종 점검하세요.</strong> 빠진 것이 있으면 지금이 마지막 기회입니다.",
+          "1~2학년 학생부를 <strong>전수로 읽어 보세요.</strong> 진로 스토리가 이어지는지, 빈 학기가 있는지 확인합니다.",
+          "진로선택 과목은 <strong>성취도 A</strong>를 목표로 하세요. 등급 부담이 적은 대신 성취도가 그대로 평가됩니다.",
+          "융합선택(사회·과학 9과목)은 석차등급이 없으므로 <strong>부담 없이 폭을 넓히는 데</strong> 쓰세요.",
+          "목표 대학 2~3개의 전형 방법(교과/학종/논술)을 정하고, 수능최저 충족 가능성을 9월 모평으로 판정하세요."
+        ],
+        risk:"<strong>이 시점 이후에는 과목을 추가할 방법이 없습니다.</strong> 3학년이 되어 지망 학과를 바꿨는데 필요한 과목이 없는 상황이 가장 뼈아픕니다. 그래서 지금 진로를 좁히기보다 <strong>인접 학과까지 커버되는 과목 조합</strong>을 짜는 것이 안전합니다." }
+    ];
+
+    /* 대학별 학종 평가요소 → 학생 행동 지침 */
+    const SIM_UNIV_GUIDE = {
+      "경북대": { w:[["진로역량","35~50%"],["학업역량","30~45%"],["공동체역량","15~20%"]],
+        act:"경북대 학생부종합은 <strong>진로역량 배점이 가장 큽니다</strong>(일반학생전형 50%). 그 안에서도 <strong>'진로 관련 교과 이수 정도'</strong>가 별도 항목입니다. 즉 <strong>어떤 과목을 들었는가가 곧 진로역량 점수</strong>입니다.",
+        subj:"2028부터 <strong>학생부교과전형에도 교과이수충실도 20%</strong>가 신설됩니다. 평가 항목은 기본교과 이수현황·교과이수학점·이수내용의 적절성·학교생활 충실도입니다. <strong>교과전형이라도 과목 선택을 신경 써야 합니다.</strong>" },
+      "전남대": { w:[["진로역량","40%"],["학업역량","30%"],["공동체역량","30%"]],
+        act:"전남대는 <strong>공동체역량 30%</strong>로 다른 대학보다 비중이 큽니다. 성실성·규칙 준수·소통과 협업·리더십·나눔과 배려를 봅니다. <strong>교과 성적만으로는 채워지지 않는 영역</strong>이니 학급·동아리에서의 역할을 만드세요.",
+        subj:"면접에서 <strong>'계열·전공 관련 교과 이수 노력'</strong>을 직접 묻습니다. 왜 그 과목을 선택했는지 한 문장으로 답할 수 있어야 합니다." },
+      "충북대": { w:[["학업적 역량","61점 (76.2%)"],["사회적 역량","19점 (23.8%)"]],
+        act:"충북대는 <strong>학업적 역량이 76%</strong>로 압도적입니다. 전체 교과의 학업적 노력과 성취도, <strong>전공계열 관련 교과 이수노력 및 교과성취도</strong>, 학습태도와 의지를 봅니다.",
+        subj:"교과성적을 <strong>석차등급 × 성취도로 합산</strong>합니다. 2등급 A(9.0)가 1등급 D(6.5)보다 높으므로, 등급만 쫓지 말고 <strong>원점수 90점 이상(성취도 A)</strong>을 함께 노리세요." },
+      "경상국립대": { w:[["지식탐구역량","45%"],["진로역량","25%"],["자기주도역량","20%"],["공동체역량","10%"]],
+        act:"경상국립대는 <strong>지식탐구역량 45%</strong>가 핵심입니다. '지원 전공(계열) 주요 과목 교육과정 이수 성취수준'과 '전공연계 기초 학업 탐구역량(교내 학습활동)'을 봅니다.",
+        subj:"의·약·수의계열은 <strong>학생부교과전형에도 정성평가 20%</strong>가 적용됩니다. 교과 이수과정·학업성취도·출결·학교폭력 등을 종합 평가합니다." },
+      "서울대": { w:[["학업역량","—"],["진로역량","—"],["공동체역량","—"]],
+        act:"서울대는 <strong>전공 연계 과목의 이수 여부를 수시 서류평가와 정시 교과역량평가에 반영</strong>한다고 명시했습니다. 다만 <strong>고교의 개설 여건을 고려</strong>하므로, 학교에 과목이 없다는 이유로 불이익을 받지는 않습니다.",
+        subj:"자연계열은 <strong>수학 진로선택 기하·미적분Ⅱ + 과학 진로선택 3과목 이상</strong>, 인문·사회계열은 <strong>제2외국어/한문 1과목 이상</strong>이 권장과목입니다." },
+      "한양대": { w:[["기초학업역량","—"],["심층학업역량","—"],["진로탐구역량","—"],["공동체역량","—"]],
+        act:"한양대는 2028부터 <strong>학생부교과전형에 정성평가 40%</strong>를 넣습니다. 평가 지표는 <strong>계열적합성(교과목 이수) · 학교생활성실도(출결) · 심층학업역량(세특 중심)</strong>입니다.",
+        subj:"정시 학생부평가에서 자연계열 A등급 조건은 <strong>미적분Ⅱ 또는 기하 + 과학Ⅰ 1과목 + 과학Ⅱ 2과목</strong>입니다. 과학Ⅱ 2과목은 3학년에 몰아 듣기 어려우니 <strong>고2 수강신청 때</strong> 넣어야 합니다." },
+      "조선대": { w:[["학업역량","—"],["진로역량","—"],["공동체역량","—"]],
+        act:"조선대는 <strong>학생부종합을 면접형과 서류형으로 나눠</strong> 운영합니다. 같은 학과라도 <strong>면접형 합격선이 교과전형보다 낮은 경우</strong>가 있으므로(건축학과 교과 4.20 vs 면접형 3.59), 면접 준비가 되어 있다면 유리한 카드입니다.",
+        subj:"반영교과는 국어·영어·수학·사회·과학·한국사입니다. 특정 과목을 빼면 그대로 반영 과목 수가 줄어듭니다." },
+      "원광대": { w:[["학업역량","—"],["진로역량","—"],["공동체역량","—"]],
+        act:"원광대는 <strong>지역인재를 전북 전형과 호남 전형으로 분리</strong>합니다. 광주·전남 학생은 <strong>호남 전형에만</strong> 지원할 수 있으므로 요강에서 전형명을 반드시 확인하세요.",
+        subj:"보건의료 계열(물리치료·임상병리·방사선·작업치료·치위생)이 넓게 개설되어 있습니다. 학과별 요구 과목이 다르므로 개별 확인이 필요합니다." }
+    };
+
     /* 계열 × 내신 등급대 맞춤 사례 — 42개 조합 */
     const SIM_CASE_MATRIX = {
       "의약학": [
@@ -4278,6 +4400,10 @@
         opt.value = key; opt.textContent = key;
         trackSel.appendChild(opt);
       });
+      const undecided = document.createElement('option');
+      undecided.value = '__UNDECIDED__';
+      undecided.textContent = '아직 정하지 못했습니다 (진로 미결정)';
+      trackSel.appendChild(undecided);
       fillBandPicker();
       bandSel.addEventListener('change', renderBandHint);
 
@@ -4325,12 +4451,16 @@
       const univ = document.getElementById('sim-univ').value.trim();
       const major = document.getElementById('sim-major').value.trim();
 
-      const track = SIM_TRACKS[trackKey];
+      const undecided = (trackKey === '__UNDECIDED__');
+      const trackName = undecided ? '진로 미결정' : trackKey;
+      const track = undecided ? SIM_TRACKS['인문·사회'] : SIM_TRACKS[trackKey];
+      const semIdx = Math.max(0, SIM_TIMELINE.findIndex(t => t.key === grade));
+      const TL = SIM_TIMELINE[semIdx];
       const bandIdx = currentBandIdx();
       const band = SIM_GRADE_BANDS[bandIdx] || SIM_GRADE_BANDS[0];
       const scaleTag = currentScale() === '5' ? ' <span class="badge badge-primary" style="font-size:0.66rem;">5등급제</span>' : ' <span class="badge" style="background:#f1f5f9;color:#475569;font-size:0.66rem;">9등급제</span>';
       /* 계열 x 등급대 정확 매칭 사례 */
-      const mx = (SIM_CASE_MATRIX[trackKey] || [])[bandIdx] || null;
+      const mx = undecided ? null : ((SIM_CASE_MATRIX[trackKey] || [])[bandIdx] || null);
 
       const cardRows = mx ? mx.cards.map(c => {
         const color = c[0] === '상향' ? 'badge-danger' : (c[0] === '적정' ? 'badge-primary' : 'badge-success');
@@ -4339,7 +4469,7 @@
 
       const caseBlock = mx ? `
           <div class="callout callout-success">
-            <h4><i class="fa-solid fa-user-graduate"></i> ${esc(trackKey)} · 내신 ${esc(bandLabel)}${scaleTag} 맞춤 전략</h4>
+            <h4><i class="fa-solid fa-user-graduate"></i> ${esc(trackName)} · 내신 ${esc(bandLabel)}${scaleTag} 맞춤 전략</h4>
             <p style="margin:0 0 8px; font-size:0.82rem; color:var(--text-muted);">석차 위치 기준 ≈ 상위 ${pct9(BAND_MID9[bandIdx]).toFixed(0)}% · 9등급제 <strong>${esc(band[0])}</strong> · 5등급제 <strong>${to5(BAND_MID9[bandIdx]).toFixed(2)}등급</strong>에 해당합니다.</p>
             <p style="margin:6px 0 10px; font-size:1.02rem;"><strong>${mx.t}</strong></p>
             <p style="margin:6px 0 12px;">${mx.dx}</p>
@@ -4363,9 +4493,7 @@
         ? `<strong>${esc(univ || '희망 대학')} ${esc(major || '희망 학과')}</strong> 지원을 목표로 한 `
         : '';
 
-      const remainSemesters = grade === '고1'
-        ? track.roadmap
-        : track.roadmap.slice(2); // 고2라면 고2-1부터 표시
+      const remainSemesters = track.roadmap.slice(semIdx);   // 남은 학기만
 
       const roadmapRows = remainSemesters.map(r => `
         <tr><td><strong>${esc(r[0])}</strong></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>
@@ -4411,19 +4539,19 @@
 
         /* 이 계열에서 실제로 쓸 수 있는 지역인재 전형이 있는지 데이터로 확인 */
         let trackTalentLine = '';
-        if (trackKey !== '의약학') {
+        if (trackKey !== '의약학' && !undecided) {
           const hits = SIM_DB.filter(r =>
             r[F_FLD] === trackKey && isLocalTalent(r[F_ADM]) && canApply(r[F_U], r[F_ADM], R));
           const us = [];
           hits.forEach(r => { if (us.indexOf(r[F_U]) === -1) us.push(r[F_U]); });
           trackTalentLine = us.length
-            ? `<p style="margin:6px 0;">🎓 <strong>${esc(trackKey)} 계열에도 지역인재 전형이 있습니다</strong> — 수록된 자료 기준 <strong>${us.map(esc).join(' · ')}</strong>. 지역인재는 의약학 전용이 아닙니다. 「② 대학으로 찾기」에서 학과별 합격선을 확인하세요.</p>`
-            : `<p style="margin:6px 0;">🎓 지역인재 전형은 <strong>의약학 계열뿐 아니라 일반 학과에도 운영</strong>됩니다. 다만 ${esc(trackKey)} 계열은 수록된 자료에 해당 사례가 없으니, 목표 대학 모집요강에서 직접 확인하세요.</p>`;
+            ? `<p style="margin:6px 0;">🎓 <strong>${esc(trackName)} 계열에도 지역인재 전형이 있습니다</strong> — 수록된 자료 기준 <strong>${us.map(esc).join(' · ')}</strong>. 지역인재는 의약학 전용이 아닙니다. 「② 대학으로 찾기」에서 학과별 합격선을 확인하세요.</p>`
+            : `<p style="margin:6px 0;">🎓 지역인재 전형은 <strong>의약학 계열뿐 아니라 일반 학과에도 운영</strong>됩니다. 다만 ${esc(trackName)} 계열은 수록된 자료에 해당 사례가 없으니, 목표 대학 모집요강에서 직접 확인하세요.</p>`;
         }
 
         regionBlock = `
           <div class="callout callout-success">
-            <h4><i class="fa-solid fa-map-location-dot"></i> ${esc(regionKey)} 재학생 · ${esc(trackKey)} 계열 맞춤 전략</h4>
+            <h4><i class="fa-solid fa-map-location-dot"></i> ${esc(regionKey)} 재학생 · ${esc(trackName)} 맞춤 전략</h4>
             <p style="margin:6px 0;">${talentLine}</p>
             ${docLine}
             ${trackTalentLine}
@@ -4431,22 +4559,89 @@
           </div>`;
       }
 
-      const nextSteps = grade === '고1'
-        ? ["관심 학과 3~5개 탐색 및 계열 최종 결정", "2~3학년 선택과목 예비 수강신청 시 위 로드맵과 대조", "공통과목 내신 1~2등급 확보 및 세특 탐구 습관 만들기"]
-        : ["3학년 최종 선택과목 확정 및 누락 권장과목 점검", "진로선택 과목 성취도 A 확보에 집중", "목표 대학 2~3개 구체화(상향/적정/안전) 및 수능 최저 달성 가능성 점검"];
+      /* ===== A. 이번 학기 결정 마감 ===== */
+      const dueBlock = `
+          <div class="${TL.due ? 'warning-box' : 'callout callout-info'}" style="margin-bottom:16px;">
+            <h4><i class="fa-solid fa-hourglass-half"></i> ${esc(TL.label)} · ${esc(TL.phase)}${TL.due ? ' — 이번 학기 마감: <span style="color:var(--danger);">' + esc(TL.due) + '</span>' : ''}</h4>
+            <p style="margin:6px 0 10px;">${TL.dueText}</p>
+            <p style="margin:6px 0 4px;"><strong><i class="fa-solid fa-list-check"></i> 이번 학기에 반드시 해야 할 일</strong></p>
+            <ul style="margin:0 0 10px 18px; line-height:1.85;">
+              ${TL.must.map(x => `<li>${x}</li>`).join('')}
+            </ul>
+            <p style="margin:8px 0 0; padding-top:8px; border-top:1px dashed #d1d5db; font-size:0.9rem;">⚠️ <strong>놓치면 벌어지는 일</strong> — ${TL.risk}</p>
+          </div>`;
+
+      /* ===== B. 수강신청 3대 난제 ===== */
+      const blockerBlock = `
+          <div class="callout callout-warning">
+            <h4><i class="fa-solid fa-triangle-exclamation"></i> 수강신청에서 막히는 3가지 — 이렇게 푸세요</h4>
+            <div class="table-container">
+              <table>
+                <thead><tr><th style="width:110px;">상황</th><th>해결 순서</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>학교에<br>없는 과목</strong></td><td>① <strong>공동교육과정</strong>(주말·거점학교) 신청 → ② <strong>온라인학교</strong> 수강 → ③ 그래도 불가하면 <strong>인접 과목으로 대체</strong>하고 세특에서 그 내용을 다루세요. 서울대는 <strong>"고교의 과목 개설 여건을 고려한다"</strong>고 명시했으므로, 학교에 없는 것은 불이익이 아닙니다.</td></tr>
+                  <tr><td><strong>같은 시간대<br>과목 충돌</strong></td><td>① 대학이 지정한 <strong>핵심 권장과목</strong>인가 → 예: 학교 정규과목으로 선택<br>② 후속 심화과목의 <strong>선수과목</strong>인가 → 예: 학교 정규과목으로 선택<br>③ 둘 다 아니면 <strong>탈락한 과목을 공동교육과정으로</strong> 이수</td></tr>
+                  <tr><td><strong>선수과목<br>(위계)</strong></td><td>미적분Ⅱ는 미적분Ⅰ 다음, 과학Ⅱ는 과학Ⅰ 다음입니다. <strong>3학년에 듣고 싶은 과목이 있으면 2학년에 선수과목을 넣어야</strong> 합니다. 순서가 꼬이면 되돌릴 수 없습니다.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+
+      /* ===== C. 수업·학교생활 중점 ===== */
+      const lifeBlock = `
+          <div class="callout callout-success">
+            <h4><i class="fa-solid fa-chalkboard-user"></i> 수업과 학교생활에서 무엇에 중점을 둘까</h4>
+            <p style="margin:6px 0;">세특은 <strong>교사의 고유 권한</strong>이라 학생이 문구를 정할 수 없습니다. 학생이 할 수 있는 일은 <strong>교사가 관찰할 근거를 만드는 것</strong>뿐입니다.</p>
+            <div class="table-container">
+              <table>
+                <thead><tr><th style="width:120px;">영역</th><th>구체적 행동</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>수업 중</strong></td><td>"어려워요"가 아니라 <strong>"이 공식이 ○○ 분야에 적용될 때의 한계는 무엇인가요?"</strong> 수준의 질문을 하세요. 질문의 수준이 곧 학업역량의 근거입니다.</td></tr>
+                  <tr><td><strong>모둠·실험</strong></td><td>기록자나 발표자 역할을 맡으세요. <strong>협업 역량과 학업 역량을 동시에</strong> 교사에게 보여줄 수 있는 유일한 자리입니다.</td></tr>
+                  <tr><td><strong>수행평가</strong></td><td>정해진 분량만 채우지 말고 <strong>지망 전공과 연계한 심화 파트를 자발적으로 추가</strong>하세요. 교사가 세특에 쓸 수 있는 재료가 여기서 나옵니다.</td></tr>
+                  <tr><td><strong>탐구 보고서</strong></td><td>수업과 무관한 주제는 인정받기 어렵습니다. <strong>교과 진도에서 출발</strong>해 ① 동기·교과 연계 ② 개념 정리 ③ <strong>직접 수행한 분석</strong>(수식 전개·데이터·실험·코드) ④ 배운 점 ⑤ 후속 계획의 5요소를 담고, <strong>수업 중 3분 발표</strong>로 공유하세요.</td></tr>
+                  <tr><td><strong>출결</strong></td><td>미인정 <strong>지각·조퇴 3회 = 결석 1일</strong>로 환산됩니다. 한양대 정시 학생부평가는 미인정 결석 10일 이하가 A입니다. <strong>공부량과 무관하게 습관 하나로 잃는 점수</strong>입니다.</td></tr>
+                  <tr><td><strong>학교폭력</strong></td><td>조치사항 제3호~제9호가 기재되면 <strong>상당수 대학에서 학교장 추천 대상에서 제외</strong>됩니다. 지역균형·학교장추천 전형이 통째로 막힙니다.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>`;
+
+      /* ===== D. 진로 미결정 학생 안내 ===== */
+      const undecidedBlock = undecided ? `
+          <div class="callout callout-info" style="border-left-color:#a855f7; background:#faf5ff;">
+            <h4><i class="fa-solid fa-compass"></i> 아직 진로를 못 정했다면 — 지금은 그게 정상입니다</h4>
+            <p style="margin:6px 0;">고1에 진로가 확실한 학생은 소수입니다. 문제는 <strong>결정하지 못한 것</strong>이 아니라 <strong>결정을 미루다 과목 신청 마감을 놓치는 것</strong>입니다. 진로가 정해지지 않았을 때의 전략은 <strong>선택지를 좁히지 않는 과목 조합</strong>을 짜는 것입니다.</p>
+            <div class="table-container">
+              <table>
+                <thead><tr><th>구분</th><th>지금 넣어야 할 과목</th><th>이유</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>수학</strong></td><td>대수 · 미적분Ⅰ · 확률과 통계</td><td>2028 수능 출제 범위이자 거의 모든 계열의 기초. <strong>빼면 선택지가 급격히 줄어듭니다.</strong></td></tr>
+                  <tr><td><strong>과학</strong></td><td>물리학·화학·생명과학 중 <strong>2과목 이상</strong></td><td>자연·공학·의약 계열로 갈 여지를 남깁니다. 나중에 안 가더라도 손해가 아닙니다.</td></tr>
+                  <tr><td><strong>사회</strong></td><td>사회와 문화 · 경제 중 1과목 이상</td><td>인문·상경 계열로 갈 여지를 남깁니다. 경제는 상경계열에서 미이수가 가장 눈에 띄는 공백입니다.</td></tr>
+                  <tr><td><strong>융합선택</strong></td><td>관심 가는 것 무엇이든</td><td>사회·과학 융합선택 9과목은 <strong>석차등급이 산출되지 않습니다.</strong> 부담 없이 탐색용으로 쓰세요.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="margin:10px 0 0;"><strong>진로를 좁히는 순서</strong> — ① 고1-1: 계열 2~3개로 넓게 탐색 → ② 고1-2: 계열 1개로 좁히고 <strong>과목은 넓게</strong> 신청 → ③ 고2-1: 학과군 2~3개로 좁힘 → ④ 고2-2: 최종 확정. <strong>과목을 좁히는 것보다 진로를 좁히는 것이 항상 나중이어야 합니다.</strong></p>
+            <p style="margin:8px 0 0; font-size:0.88rem;">아래 로드맵은 <strong>인문·사회 계열 기준 예시</strong>입니다. 계열을 정한 뒤 다시 실행하면 그 계열에 맞는 설계가 나옵니다.</p>
+          </div>` : '';
 
       document.getElementById('sim-result').innerHTML = `
         <div class="card" style="border:2px solid #a855f7;">
           <div class="card-header">
-            <h3><i class="fa-solid ${track.icon} text-primary"></i> ${nameLine}${esc(trackKey)} 계열 진로 로드맵 결과</h3>
+            <h3><i class="fa-solid ${track.icon} text-primary"></i> ${nameLine}${undecided ? '진로 미결정' : esc(trackKey)} · ${esc(TL.label)} 학교생활 설계서</h3>
           </div>
-          <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:14px;">대표 학과: ${esc(track.majors)}</p>
+          <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:14px;">${undecided ? '진로를 정하지 않은 상태에서 선택지를 넓게 유지하는 설계입니다.' : '대표 학과: ' + esc(track.majors)}</p>
+          ${undecidedBlock}
+          ${dueBlock}
           ${majorBlock}
-          <h4 style="margin:6px 0 8px; color:var(--secondary);"><i class="fa-solid fa-star"></i> ${esc(trackKey)} 계열 공통 핵심 권장과목 / 권장과목</h4>
+          <h4 style="margin:6px 0 8px; color:var(--secondary);"><i class="fa-solid fa-star"></i> ${undecided ? "선택지를 넓게 유지하는 기본 과목" : esc(trackKey) + " 계열 공통 핵심 권장과목 / 권장과목"}</h4>
           <p style="margin-bottom:6px;">🔴 핵심 권장과목: ${coreChips}</p>
           <p style="margin-bottom:14px;">🔵 권장과목: ${recChips}</p>
 
-          <h4 style="margin:14px 0 8px; color:var(--secondary);"><i class="fa-solid fa-timeline"></i> ${grade} 기준 남은 학기별 과목 로드맵</h4>
+          <h4 style="margin:14px 0 8px; color:var(--secondary);"><i class="fa-solid fa-timeline"></i> ${esc(TL.label)} 기준 <strong>남은 학기</strong> 과목 로드맵</h4>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin:0 0 8px;">이미 지난 학기는 제외하고, <strong>앞으로 신청할 수 있는 학기만</strong> 보여줍니다. 학교 편성표와 나란히 놓고 대조하세요.</p>
           <div class="table-container">
             <table>
               <thead><tr><th>학기</th><th>수학</th><th>과학/전문교과</th><th>사회/기타</th></tr></thead>
@@ -4454,17 +4649,24 @@
             </table>
           </div>
 
-          <div class="callout callout-info" style="margin-top:16px;">
-            <h4><i class="fa-solid fa-bullseye"></i> 내신 ${esc(bandLabel)}${scaleTag} 기준 목표 대학군</h4>
-            <strong>${esc(band[1])}</strong> — ${esc(band[2])}
-          </div>
+          ${blockerBlock}
 
           <div class="callout callout-warning">
-            <h4><i class="fa-solid fa-lightbulb"></i> 전략 팁</h4>
+            <h4><i class="fa-solid fa-lightbulb"></i> ${undecided ? "계열 결정 시 유의점" : esc(trackKey) + " 계열 과목 선택 시 유의점"}</h4>
             ${esc(track.tip)}
           </div>
 
+          ${lifeBlock}
+
           ${regionBlock}
+
+          <h4 style="margin:22px 0 8px; color:var(--secondary); padding-top:14px; border-top:2px solid var(--border);"><i class="fa-solid fa-binoculars"></i> 여기서부터는 <strong>참고용 장기 전망</strong>입니다</h4>
+          <p style="color:var(--text-muted); font-size:0.86rem; margin:0 0 12px;">고1·2 시점에서 지원 대학을 확정할 필요는 없습니다. 아래는 <strong>지금의 위치가 어디쯤인지 감을 잡는 용도</strong>이며, 실제 지원 전략은 고3에 다시 세웁니다. 숫자에 학생이 위축되지 않도록 <strong>"지금 바꿀 수 있는 것은 과목과 태도"</strong>라는 점을 함께 말해 주세요.</p>
+
+          <div class="callout callout-info">
+            <h4><i class="fa-solid fa-bullseye"></i> 내신 ${esc(bandLabel)}${scaleTag} 기준 목표 대학군 (참고)</h4>
+            <strong>${esc(band[1])}</strong> — ${esc(band[2])}
+          </div>
 
           ${caseBlock}
 
@@ -4473,10 +4675,6 @@
             <span style="font-size:0.9rem;">${esc(track.caseHint)} 「실전 멘토링 상담 사례집」 섹션에 멘토용 대화 스크립트가 실려 있습니다.</span>
           </div>
 
-          <h4 style="margin:16px 0 8px; color:var(--secondary);"><i class="fa-solid fa-list-check"></i> 다음 학기까지 실천 과제 3개</h4>
-          <ol style="margin-left:18px; line-height:1.8;">
-            ${nextSteps.map(s => `<li>${esc(s)}</li>`).join('')}
-          </ol>
           <p style="color:var(--text-muted); font-size:0.8rem; margin-top:10px;">💡 더 자세한 근거는 「계열별 과목선택 가이드」, 「대학별 전공권장 매트릭스」, 「실전 멘토링 상담 사례집」 섹션에서 확인하세요.</p>
         </div>
       `;
