@@ -492,11 +492,29 @@
 
     /* Print Styles */
     @media print {
-      .sidebar, .top-header, .btn-print { display: none !important; }
+      .sidebar, .top-header, .btn-print, .no-print { display: none !important; }
       .main-wrapper { margin-left: 0 !important; }
       .content-container { padding: 0 !important; max-width: 100% !important; }
-      .section-view { display: block !important; page-break-after: always; }
+
+      /* 기본: 현재 보고 있는 섹션만 인쇄한다 (전체 강제 펼침 금지) */
+      .section-view { display: none !important; }
+      .section-view.active { display: block !important; }
+      .section-view.active:last-of-type { page-break-after: auto; }
+
+      /* body.print-all 일 때만 전체 핸드북 인쇄 */
+      body.print-all .section-view { display: block !important; page-break-after: always; }
+
+      /* 워크시트 범위 제한 — 학생용만 / 교사용만 */
+      body.print-student .ws-teacher, body.print-teacher .ws-student { display: none !important; }
+      body.print-student .ws-tabs, body.print-teacher .ws-tabs { display: none !important; }
+
       .card { border: 1px solid #ccc !important; box-shadow: none !important; page-break-inside: avoid; }
+      input, textarea, select {
+        border: 1px solid #999 !important; background: #fff !important;
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+      textarea { min-height: 60px; }
+      a[href]:after { content: ""; }
     }
 
     @media (max-width: 900px) {
@@ -593,8 +611,11 @@
         <span>/</span>
         <strong id="current-section-title">종합 대시보드</strong>
       </div>
-      <button class="btn-print" onclick="window.print()">
+      <button class="btn-print" onclick="printScope('section')">
         <i class="fa-solid fa-print"></i> 웹북 인쇄 / PDF 저장
+      </button>
+      <button class="btn-print" style="margin-left:6px; background:#f1f5f9; color:#475569;" onclick="printScope('all')">
+        <i class="fa-solid fa-book"></i> 전체 인쇄
       </button>
     </header>
 
@@ -2771,73 +2792,131 @@
 
       <!-- ================= SECTION: WORKSHEET ================= -->
       <section id="sec-worksheet" class="section-view">
+        <div class="hero-card no-print" style="background:linear-gradient(135deg,#0f766e 0%,#14b8a6 100%); box-shadow:0 10px 25px -5px rgba(20,184,166,.3);">
+          <h2><i class="fa-solid fa-clipboard-list"></i> 멘토링 상담 워크시트</h2>
+          <p style="color:#ccfbf1;">화면에서 <strong>직접 입력하며 상담</strong>할 수 있습니다. 입력값은 이 브라우저에 자동 저장되고, 기본정보는 <strong>시뮬레이터로 그대로 넘겨</strong> 바로 설계 결과를 볼 수 있습니다.</p>
+        </div>
+
+        <div class="card no-print">
+          <div style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+            <div id="ws-tabs" class="ws-tabs" style="display:flex; flex-wrap:wrap; gap:8px;">
+              <button class="sim-tab active" data-ws="student" onclick="wsSetMode('student')"><i class="fa-solid fa-user-pen"></i> 학생 사전 워크시트</button>
+              <button class="sim-tab" data-ws="teacher" onclick="wsSetMode('teacher')"><i class="fa-solid fa-user-tie"></i> 상담교사 기록지</button>
+            </div>
+            <div style="margin-left:auto; display:flex; flex-wrap:wrap; gap:6px;">
+              <button class="btn-print" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; font-size:0.84rem;" onclick="printScope('student')"><i class="fa-solid fa-print"></i> 학생용만 인쇄</button>
+              <button class="btn-print" style="background:var(--secondary); color:#fff; border:none; padding:8px 14px; font-size:0.84rem;" onclick="printScope('teacher')"><i class="fa-solid fa-print"></i> 교사용만 인쇄</button>
+              <button class="btn-print" style="background:#f1f5f9; color:#475569; border:1px solid var(--border); padding:8px 14px; font-size:0.84rem;" onclick="wsClear()"><i class="fa-solid fa-eraser"></i> 입력 초기화</button>
+            </div>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.8rem; margin:10px 0 0;">💡 인쇄 버튼은 <strong>범위별로 나뉘어</strong> 있습니다 — 「학생용만」 약 6쪽, 「교사용만」 약 4쪽. 상단 <strong>「웹북 인쇄 / PDF 저장」</strong>은 <strong>지금 보고 있는 섹션만</strong>, <strong>「전체 인쇄」</strong>는 핸드북 전체(약 70쪽)를 출력합니다. <strong>크롬 인쇄창의 페이지 수도 그에 맞춰 줄어듭니다.</strong></p>
+        </div>
+
+        <!-- ===== 공통 기본정보 (양쪽 모두 인쇄) ===== -->
         <div class="card">
           <div class="card-header">
-            <h3><i class="fa-solid fa-clipboard-list text-primary"></i> 멘토링 상담 워크시트 (현장 작성용)</h3>
+            <h3><i class="fa-solid fa-id-card text-primary"></i> 기본 정보 <span class="badge badge-primary" style="font-size:0.68rem;">시뮬레이터 연동</span></h3>
           </div>
-          <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 10px;">상담 전 학생이 직접 작성해 오는 자기분석 자료입니다. 멘토는 이 워크시트를 바탕으로 상담을 진행하세요.</p>
           <div class="table-container">
             <table>
               <tbody>
                 <tr>
-                  <th style="width: 15%;">학생 이름</th>
-                  <td style="width: 35%;"><input type="text" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;" placeholder="홍길동"></td>
-                  <th style="width: 15%;">학교 / 학년</th>
-                  <td style="width: 35%;"><input type="text" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;" placeholder="○○고등학교 1학년"></td>
+                  <th style="width:15%;">학생 이름</th>
+                  <td style="width:35%;"><input id="ws-name" type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="홍길동"></td>
+                  <th style="width:15%;">학교</th>
+                  <td style="width:35%;"><input id="ws-school" type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="○○고등학교"></td>
+                </tr>
+                <tr>
+                  <th>학년 · 학기</th>
+                  <td><select id="ws-sem" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;">
+                    <option value="고1-1">고1 1학기</option><option value="고1-2">고1 2학기</option>
+                    <option value="고2-1">고2 1학기</option><option value="고2-2">고2 2학기</option>
+                  </select></td>
+                  <th>학교 소재 지역</th>
+                  <td><select id="ws-region" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></select></td>
+                </tr>
+                <tr>
+                  <th>희망 계열</th>
+                  <td><select id="ws-track" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></select></td>
+                  <th>내신 성적 체계</th>
+                  <td><select id="ws-scale" class="ws-f" onchange="wsFillBand()" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;">
+                    <option value="5">5등급제 (현 고1·2)</option><option value="9">9등급제</option>
+                  </select></td>
+                </tr>
+                <tr>
+                  <th>희망 대학</th>
+                  <td><input id="ws-univ" type="text" class="ws-f" list="ws-univ-list" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 전남대"><datalist id="ws-univ-list"></datalist></td>
+                  <th>내신 등급대</th>
+                  <td><select id="ws-band" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></select></td>
                 </tr>
                 <tr>
                   <th>희망 학과</th>
-                  <td><input type="text" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;" placeholder="컴퓨터공학과"></td>
-                  <th>현재 내신</th>
-                  <td><input type="text" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;" placeholder="1.85 등급 (5등급제)"></td>
-                </tr>
-                <tr>
-                  <th>상담 일자</th>
-                  <td><input type="date" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;"></td>
-                  <th>담당 멘토 / 회차</th>
-                  <td><input type="text" style="width: 100%; border: 1px solid var(--border); padding: 6px; border-radius: 4px;" placeholder="김멘토 / 2차"></td>
+                  <td><input id="ws-major" type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 컴퓨터공학과"></td>
+                  <th>상담 일자 / 차수</th>
+                  <td style="display:flex; gap:6px;">
+                    <input id="ws-date" type="date" class="ws-f" style="flex:1;border:1px solid var(--border);padding:6px;border-radius:4px;">
+                    <input id="ws-round" type="text" class="ws-f" style="width:70px;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="1차">
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
+          <div class="no-print" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;">
+            <button class="btn-print" style="background:#7c3aed; color:#fff; border:none; padding:10px 18px; font-size:0.9rem;" onclick="wsToSimulator('track')">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> 이 내용으로 <strong>학교생활 설계</strong> 열기
+            </button>
+            <button class="btn-print" style="background:var(--primary); color:#fff; border:none; padding:10px 18px; font-size:0.9rem;" onclick="wsToSimulator('univ')">
+              <i class="fa-solid fa-building-columns"></i> 희망 <strong>대학</strong>으로 조회
+            </button>
+            <button class="btn-print" style="background:var(--secondary); color:#fff; border:none; padding:10px 18px; font-size:0.9rem;" onclick="wsToSimulator('major')">
+              <i class="fa-solid fa-book"></i> 희망 <strong>학과</strong>로 조회
+            </button>
+          </div>
+          <p id="ws-link-msg" class="no-print" style="color:var(--text-muted); font-size:0.82rem; margin:10px 0 0;">위 버튼을 누르면 입력한 값이 시뮬레이터에 그대로 채워지고 결과 화면으로 이동합니다. 돌아올 때는 왼쪽 메뉴에서 <strong>「멘토링 상담 워크시트」</strong>를 다시 누르면 입력값이 남아 있습니다.</p>
         </div>
 
-        <div class="card">
+        <!-- ===== 학생용 ===== -->
+        <div class="ws-student">
+          <div class="callout callout-info no-print">
+            <h4><i class="fa-solid fa-user-pen"></i> 학생 사전 워크시트 — 상담 전에 학생이 직접 작성합니다</h4>
+            상담 시간을 자기소개로 쓰지 않으려면 이 부분을 <strong>미리 채워 오는 것</strong>이 중요합니다. 인쇄해서 손으로 쓰거나, 화면에 바로 입력해도 됩니다.
+          </div>
+          <div class="card">
           <div class="card-header"><h3><i class="fa-solid fa-user-magnifying-glass text-primary"></i> Part 1. 자기 이해 — 나는 어떤 사람인가?</h3></div>
           <p style="font-weight:600; margin-bottom:6px;">나의 관심 분야 (1~3개 선택)</p>
           <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:4px 16px; margin-bottom:16px;">
-            <label><input type="checkbox"> 수학 / 논리적 문제 해결</label>
-            <label><input type="checkbox"> 과학 실험 / 자연현상 탐구</label>
-            <label><input type="checkbox"> 프로그래밍 / 기술 / AI</label>
-            <label><input type="checkbox"> 의료 / 생명 / 건강</label>
-            <label><input type="checkbox"> 언어 / 문학 / 글쓰기</label>
-            <label><input type="checkbox"> 역사 / 사회 / 정치</label>
-            <label><input type="checkbox"> 경제 / 경영 / 창업</label>
-            <label><input type="checkbox"> 예술 / 디자인 / 음악 / 체육</label>
-            <label><input type="checkbox"> 교육 / 사람 돕기 / 상담</label>
-            <label><input type="checkbox"> 법 / 정의 / 사회문제 해결</label>
+            <label><input type="checkbox" class="ws-f"> 수학 / 논리적 문제 해결</label>
+            <label><input type="checkbox" class="ws-f"> 과학 실험 / 자연현상 탐구</label>
+            <label><input type="checkbox" class="ws-f"> 프로그래밍 / 기술 / AI</label>
+            <label><input type="checkbox" class="ws-f"> 의료 / 생명 / 건강</label>
+            <label><input type="checkbox" class="ws-f"> 언어 / 문학 / 글쓰기</label>
+            <label><input type="checkbox" class="ws-f"> 역사 / 사회 / 정치</label>
+            <label><input type="checkbox" class="ws-f"> 경제 / 경영 / 창업</label>
+            <label><input type="checkbox" class="ws-f"> 예술 / 디자인 / 음악 / 체육</label>
+            <label><input type="checkbox" class="ws-f"> 교육 / 사람 돕기 / 상담</label>
+            <label><input type="checkbox" class="ws-f"> 법 / 정의 / 사회문제 해결</label>
           </div>
           <p style="font-weight:600; margin-bottom:6px;">내가 잘하는 것 (강점 3가지)</p>
-          <textarea style="width: 100%; height: 66px; border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 14px;" placeholder="1. &#10;2. &#10;3."></textarea>
+          <textarea style="width: 100%; height: 66px; border: 1px solid var(--border); border-radius: 6px; padding: 8px; margin-bottom: 14px;" placeholder="1. &#10;2. &#10;3." class="ws-f"></textarea>
 
           <div class="table-container">
             <table>
               <thead><tr><th style="width:22%;">구분</th><th style="width:39%;">교과목</th><th style="width:39%;">그렇게 생각하는 이유</th></tr></thead>
               <tbody>
-                <tr><th>좋아하는 과목 1위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><th>좋아하는 과목 2위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><th>좋아하는 과목 3위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><th style="color:#991b1b;">어렵거나 싫은 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><th>좋아하는 과목 1위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><th>좋아하는 과목 2위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><th>좋아하는 과목 3위</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><th style="color:#991b1b;">어렵거나 싫은 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
               </tbody>
             </table>
           </div>
           <p style="font-weight:600; margin:14px 0 6px;">나를 표현하는 핵심 키워드 5개</p>
           <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px;">
-            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 1">
-            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 2">
-            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 3">
-            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 4">
-            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 5">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 1" class="ws-f">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 2" class="ws-f">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 3" class="ws-f">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 4" class="ws-f">
+            <input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="키워드 5" class="ws-f">
           </div>
         </div>
 
@@ -2849,9 +2928,9 @@
             <table>
               <thead><tr><th style="width:14%;">순위</th><th style="width:30%;">희망 직업</th><th>이 직업을 원하는 이유</th></tr></thead>
               <tbody>
-                <tr><td><span class="badge badge-danger">1순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><span class="badge badge-primary">2순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><span class="badge badge-success">3순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><span class="badge badge-danger">1순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><span class="badge badge-primary">2순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><span class="badge badge-success">3순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
               </tbody>
             </table>
           </div>
@@ -2861,12 +2940,12 @@
             <table>
               <thead><tr><th style="width:14%;">순위</th><th style="width:40%;">희망 학과 (또는 계열)</th><th>알고 있는 정도</th></tr></thead>
               <tbody>
-                <tr><td><span class="badge badge-danger">1순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
-                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
-                <tr><td><span class="badge badge-primary">2순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
-                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
-                <tr><td><span class="badge badge-success">3순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
-                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
+                <tr><td><span class="badge badge-danger">1순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td>
+                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
+                <tr><td><span class="badge badge-primary">2순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td>
+                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
+                <tr><td><span class="badge badge-success">3순위</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td>
+                  <td><select style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"><option>★☆☆☆☆ 이름만 안다</option><option>★★☆☆☆ 대략 안다</option><option>★★★☆☆ 커리큘럼을 안다</option><option>★★★★☆ 졸업 후 진로까지 안다</option><option>★★★★★ 권장과목까지 확인했다</option></select></td></tr>
               </tbody>
             </table>
           </div>
@@ -2877,15 +2956,15 @@
             <table>
               <thead><tr><th>유형</th><th>희망 대학</th><th>희망 학과</th></tr></thead>
               <tbody>
-                <tr><td><span class="badge badge-danger">상향 지원 (도전)</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><span class="badge badge-primary">적정 지원 (현실)</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><span class="badge badge-success">안전 지원 (확실)</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><span class="badge badge-danger">상향 지원 (도전)</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><span class="badge badge-primary">적정 지원 (현실)</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><span class="badge badge-success">안전 지원 (확실)</span></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
               </tbody>
             </table>
           </div>
 
           <p style="font-weight:600; margin:16px 0 6px;">10년 후 나의 모습</p>
-          <textarea style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;" rows="3" placeholder="10년 후, 나는 (어디)에서 (무엇)을 하고 있을 것입니다. 내가 이 목표를 이루고 싶은 이유는…"></textarea>
+          <textarea style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;" rows="3" placeholder="10년 후, 나는 (어디)에서 (무엇)을 하고 있을 것입니다. 내가 이 목표를 이루고 싶은 이유는…" class="ws-f"></textarea>
         </div>
 
         <div class="card">
@@ -2896,10 +2975,10 @@
             <table>
               <thead><tr><th>학기</th><th>국어</th><th>수학</th><th>영어</th><th>사회(탐구)</th><th>과학(탐구)</th><th>평균</th></tr></thead>
               <tbody>
-                <tr><th style="white-space:nowrap;">고1-1</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><th style="white-space:nowrap;">고1-2</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><th style="white-space:nowrap;">고2-1</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><th style="white-space:nowrap;">고2-2</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><th style="white-space:nowrap;">고1-1</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><th style="white-space:nowrap;">고1-2</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><th style="white-space:nowrap;">고2-1</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><th style="white-space:nowrap;">고2-2</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
               </tbody>
             </table>
           </div>
@@ -2910,8 +2989,8 @@
             <table>
               <thead><tr><th>응시 시기</th><th>국어</th><th>수학</th><th>영어</th><th>통합사회</th><th>통합과학</th><th>등급 합</th></tr></thead>
               <tbody>
-                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 고2 6월"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 고2 6월" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
               </tbody>
             </table>
           </div>
@@ -2924,9 +3003,9 @@
           <div class="table-container">
             <table>
               <tbody>
-                <tr><th style="width:18%;">고2 수강 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 대수, 확률과 통계, 정보, 물리학, 사회와 문화"></td></tr>
-                <tr><th>고3 수강 예정 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 미적분Ⅱ, 인공지능 수학, 데이터 과학"></td></tr>
-                <tr><th>목표 학과 핵심 권장과목 중 <span style="color:#991b1b;">아직 안 넣은 과목</span></th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="「대학별 전공권장 매트릭스」와 대조해 적어 보세요"></td></tr>
+                <tr><th style="width:18%;">고2 수강 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 대수, 확률과 통계, 정보, 물리학, 사회와 문화" class="ws-f"></td></tr>
+                <tr><th>고3 수강 예정 과목</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 미적분Ⅱ, 인공지능 수학, 데이터 과학" class="ws-f"></td></tr>
+                <tr><th>목표 학과 핵심 권장과목 중 <span style="color:#991b1b;">아직 안 넣은 과목</span></th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="「대학별 전공권장 매트릭스」와 대조해 적어 보세요" class="ws-f"></td></tr>
               </tbody>
             </table>
           </div>
@@ -2940,9 +3019,9 @@
             <table>
               <thead><tr><th style="width:24%;">활동명</th><th style="width:16%;">기간</th><th style="width:16%;">역할</th><th>주요 활동 내용</th></tr></thead>
               <tbody>
-                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
               </tbody>
             </table>
           </div>
@@ -2952,9 +3031,9 @@
             <table>
               <thead><tr><th style="width:30%;">책 제목</th><th style="width:18%;">저자</th><th style="width:14%;">읽은 시기</th><th>느낀 점 / 이어진 탐구</th></tr></thead>
               <tbody>
-                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
-                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
+                <tr><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" class="ws-f"></td></tr>
               </tbody>
             </table>
           </div>
@@ -2965,53 +3044,109 @@
           <div class="card-header"><h3><i class="fa-solid fa-question text-primary"></i> Part 5. 고민과 궁금한 점</h3></div>
           <p style="font-weight:600; margin-bottom:6px;">지금 가장 큰 고민은? (해당하는 것 모두 체크)</p>
           <ul class="check-list">
-            <li><input type="checkbox"> 희망 학과를 아직 결정하지 못했다</li>
-            <li><input type="checkbox"> 선택과목을 잘못 선택한 것 같다</li>
-            <li><input type="checkbox"> 내신 성적이 학종에 비해 너무 낮다</li>
-            <li><input type="checkbox"> 수능 최저기준을 맞출 수 있을지 걱정된다</li>
-            <li><input type="checkbox"> 전형 유형(학종/교과/논술)을 어떻게 선택해야 할지 모른다</li>
-            <li><input type="checkbox"> 지방대와 서울 소재 대학 중 어디를 지원해야 할지 모른다</li>
-            <li><input type="checkbox"> 진로가 바뀌었는데 지금까지의 학생부가 걱정된다</li>
-            <li><input type="checkbox"> 학교에 듣고 싶은 과목이 개설되지 않았다</li>
-            <li><input type="checkbox"> 세특에 무엇을 써야 할지, 어떤 탐구를 해야 할지 모르겠다</li>
+            <li><input type="checkbox" class="ws-f"> 희망 학과를 아직 결정하지 못했다</li>
+            <li><input type="checkbox" class="ws-f"> 선택과목을 잘못 선택한 것 같다</li>
+            <li><input type="checkbox" class="ws-f"> 내신 성적이 학종에 비해 너무 낮다</li>
+            <li><input type="checkbox" class="ws-f"> 수능 최저기준을 맞출 수 있을지 걱정된다</li>
+            <li><input type="checkbox" class="ws-f"> 전형 유형(학종/교과/논술)을 어떻게 선택해야 할지 모른다</li>
+            <li><input type="checkbox" class="ws-f"> 지방대와 서울 소재 대학 중 어디를 지원해야 할지 모른다</li>
+            <li><input type="checkbox" class="ws-f"> 진로가 바뀌었는데 지금까지의 학생부가 걱정된다</li>
+            <li><input type="checkbox" class="ws-f"> 학교에 듣고 싶은 과목이 개설되지 않았다</li>
+            <li><input type="checkbox" class="ws-f"> 세특에 무엇을 써야 할지, 어떤 탐구를 해야 할지 모르겠다</li>
           </ul>
           <p style="font-weight:600; margin:16px 0 6px;">멘토 선생님께 꼭 물어보고 싶은 것</p>
-          <textarea style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;" rows="3" placeholder="Q1. &#10;Q2. &#10;Q3."></textarea>
+          <textarea style="width:100%;border:1px solid var(--border);border-radius:6px;padding:8px;" rows="3" placeholder="Q1. &#10;Q2. &#10;Q3." class="ws-f"></textarea>
         </div>
+        </div><!-- /ws-student -->
 
-        <div class="card">
-          <div class="card-header"><h3><i class="fa-solid fa-stethoscope text-primary"></i> 멘토용 — 상담 결과 및 처방 기록</h3></div>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:12px;">아래 영역은 상담 후 멘토가 기록합니다.</p>
-          <div class="table-container">
-            <table>
-              <tbody>
-                <tr><th style="width:24%;">추천 계열</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 첨단 IT·AI"></td></tr>
-                <tr><th>과목 선택 조정 필요 사항</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 고3-1에 미적분Ⅱ 누락 → 반드시 추가, 기하는 공동교육과정으로 보완"></td></tr>
-                <tr><th>추천 전형 유형</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 학종 3장 + 교과(지역인재) 2장 + 논술 1장"></td></tr>
-                <tr><th>목표 대학 수정 의견</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 상향 1곳을 적정으로 조정 권고"></td></tr>
-                <tr><th>수능 최저 달성 가능성</th><td><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 현재 3합 8 → 목표 3합 6, 수학 1등급 진입이 관건"></td></tr>
-              </tbody>
-            </table>
+        <!-- ===== 교사용 ===== -->
+        <div class="ws-teacher" style="display:none;">
+          <div class="callout callout-warning no-print">
+            <h4><i class="fa-solid fa-user-tie"></i> 상담교사 기록지 — 상담 중·후에 교사가 기록합니다</h4>
+            학생 워크시트의 <strong>자기 인식</strong>과 교사의 <strong>관찰·자료 확인</strong>이 어긋나는 지점을 찾는 것이 상담의 핵심입니다. 학생용과 별도로 인쇄·보관하세요.
           </div>
-          <h4 style="margin: 16px 0 8px;">멘토 종합 처방</h4>
-          <textarea style="width: 100%; height: 90px; border: 1px solid var(--border); border-radius: 6px; padding: 8px;" placeholder="학생의 과목 선택 적합성 및 3대 실천 과제를 기록하세요."></textarea>
-          <h4 style="margin: 14px 0 8px;">다음 상담까지 실천 과제 3개</h4>
-          <textarea style="width: 100%; height: 70px; border: 1px solid var(--border); border-radius: 6px; padding: 8px;" placeholder="1. &#10;2. &#10;3."></textarea>
-          <div class="table-container" style="margin-top:14px;">
-            <table>
-              <tbody>
-                <tr>
-                  <th style="width:16%;">다음 상담 날짜</th><td style="width:34%;"><input type="date" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
-                  <th style="width:16%;">준비할 것</th><td style="width:34%;"><input type="text" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 3학년 수강신청 가안, 탐구보고서 1편"></td>
-                </tr>
-              </tbody>
-            </table>
+
+          <div class="card">
+            <div class="card-header"><h3><i class="fa-solid fa-magnifying-glass-chart text-primary"></i> 1. 사전 진단 — 학생 인식 vs 교사 확인</h3></div>
+            <div class="table-container">
+              <table>
+                <thead><tr><th style="width:22%;">항목</th><th style="width:30%;">학생이 말한 것</th><th style="width:30%;">교사가 확인한 것</th><th style="width:18%;">격차</th></tr></thead>
+                <tbody>
+                  <tr><th>진로 명확도</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 컴퓨터공학 확실"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 이유 설명 못함, 탐구 이력 없음"></td><td><select class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>—</option><option>일치</option><option>보완 필요</option><option>재설계 필요</option></select></td></tr>
+                  <tr><th>과목 이수 적합성</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 다 챙겼다고 생각"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 미적분Ⅱ 누락, 물리 미이수"></td><td><select class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>—</option><option>일치</option><option>보완 필요</option><option>재설계 필요</option></select></td></tr>
+                  <tr><th>학업(내신·모의)</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><select class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>—</option><option>일치</option><option>보완 필요</option><option>재설계 필요</option></select></td></tr>
+                  <tr><th>세특·탐구 이력</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><select class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>—</option><option>일치</option><option>보완 필요</option><option>재설계 필요</option></select></td></tr>
+                  <tr><th>출결·학교생활</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="미인정 결석 ○일 / 지각 ○회"></td><td><select class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"><option>—</option><option>일치</option><option>보완 필요</option><option>재설계 필요</option></select></td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-          <div class="callout callout-info" style="margin-top:14px;">
-            <h4><i class="fa-solid fa-print"></i> 인쇄 안내</h4>
-            상단의 <strong>「웹북 인쇄 / PDF 저장」</strong> 버튼을 누르면 이 워크시트를 포함한 전체 핸드북이 인쇄용으로 정리되어 출력됩니다. 워크시트만 필요하면 인쇄 미리보기에서 해당 페이지만 지정해 출력하세요.
+
+          <div class="card">
+            <div class="card-header"><h3><i class="fa-solid fa-hourglass-half text-primary"></i> 2. 이번 학기 결정 사항 <span class="badge badge-danger" style="font-size:0.68rem;">최우선</span></h3></div>
+            <p style="color:var(--text-muted); font-size:0.86rem; margin-bottom:10px;">고1·2 상담의 실질적 산출물은 <strong>수강신청 결정</strong>입니다. 이 표를 채우지 못했다면 상담이 끝난 것이 아닙니다.</p>
+            <div class="table-container">
+              <table>
+                <thead><tr><th style="width:20%;">구분</th><th style="width:34%;">확정 내용</th><th style="width:26%;">확인 방법</th><th style="width:20%;">기한</th></tr></thead>
+                <tbody>
+                  <tr><th>추가할 과목</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 미적분Ⅱ(3-1), 물리학(2-2)"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="편성표 확인 완료"></td><td><input type="date" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                  <tr><th>뺄 과목</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="date" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                  <tr><th>미개설 → 대체</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 기하 → 공동교육과정"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="신청 시기 확인"></td><td><input type="date" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                  <tr><th>선택군 충돌</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 물리 vs 경제 → 물리 선택"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="date" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                  <tr><th>선수과목 위계</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 미적Ⅰ(2-2) → 미적Ⅱ(3-1) 순서 확인"></td><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td><td><input type="date" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          <div class="card">
+            <div class="card-header"><h3><i class="fa-solid fa-stethoscope text-primary"></i> 3. 처방 — 시점별 실행 과제</h3></div>
+            <div class="table-container">
+              <table>
+                <thead><tr><th style="width:16%;">시점</th><th>실행 과제</th><th style="width:14%;">확인</th></tr></thead>
+                <tbody>
+                  <tr><th>이번 주</th><td><textarea class="ws-f" style="width:100%;border:1px solid var(--border);border-radius:4px;padding:6px;" rows="2" placeholder="예: 학교 교육과정 편성표 받아오기"></textarea></td><td style="text-align:center;"><input type="checkbox" class="ws-f" style="width:20px;height:20px;"></td></tr>
+                  <tr><th>이번 학기</th><td><textarea class="ws-f" style="width:100%;border:1px solid var(--border);border-radius:4px;padding:6px;" rows="2" placeholder="예: 교과 연계 탐구보고서 1편 작성 후 발표"></textarea></td><td style="text-align:center;"><input type="checkbox" class="ws-f" style="width:20px;height:20px;"></td></tr>
+                  <tr><th>다음 상담까지</th><td><textarea class="ws-f" style="width:100%;border:1px solid var(--border);border-radius:4px;padding:6px;" rows="2" placeholder="예: 3학년 수강신청 가안 작성해 오기"></textarea></td><td style="text-align:center;"><input type="checkbox" class="ws-f" style="width:20px;height:20px;"></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <h4 style="margin:16px 0 8px;">수업·학교생활 중점 지도 사항</h4>
+            <div class="table-container">
+              <table>
+                <thead><tr><th style="width:22%;">영역</th><th>이 학생에게 강조할 것</th></tr></thead>
+                <tbody>
+                  <tr><th>수업 참여</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 질문 수준 올리기 — 개념 확인이 아니라 적용 한계를 묻기"></td></tr>
+                  <tr><th>수행평가·탐구</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 교과 진도에서 출발한 주제로, 직접 수행한 분석 포함"></td></tr>
+                  <tr><th>출결·태도</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 미인정 지각 3회 = 결석 1일 환산 안내"></td></tr>
+                  <tr><th>공동체 활동</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 전남대 학종은 공동체역량 30% — 학급 역할 만들기"></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3><i class="fa-solid fa-pen-to-square text-primary"></i> 4. 상담 소견 및 다음 일정</h3></div>
+            <h4 style="margin:6px 0 8px;">종합 소견</h4>
+            <textarea class="ws-f" style="width:100%;height:100px;border:1px solid var(--border);border-radius:6px;padding:8px;" placeholder="학생의 강점, 우려 지점, 진로 설계의 방향을 기록하세요."></textarea>
+            <h4 style="margin:14px 0 8px;">학부모 안내 사항</h4>
+            <textarea class="ws-f" style="width:100%;height:70px;border:1px solid var(--border);border-radius:6px;padding:8px;" placeholder="가정에서 확인·지원이 필요한 사항 (예: 공동교육과정 주말 수강 동의)"></textarea>
+            <div class="table-container" style="margin-top:14px;">
+              <table>
+                <tbody>
+                  <tr>
+                    <th style="width:16%;">다음 상담일</th><td style="width:34%;"><input type="date" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
+                    <th style="width:16%;">학생이 준비할 것</th><td style="width:34%;"><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;" placeholder="예: 수강신청 가안, 탐구보고서 1편"></td>
+                  </tr>
+                  <tr>
+                    <th>상담 교사</th><td><input type="text" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
+                    <th>기록 일자</th><td><input type="date" class="ws-f" style="width:100%;border:1px solid var(--border);padding:6px;border-radius:4px;"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div><!-- /ws-teacher -->
       </section>
 
       <!-- ================= SECTION: FAQ ================= -->
@@ -3205,6 +3340,18 @@
   </div>
 
   <script>
+    /* 인쇄 범위 제어 — 크롬 인쇄창의 페이지 수 자체를 줄인다 */
+    function printScope(scope) {
+      const c = document.body.classList;
+      c.remove('print-all', 'print-student', 'print-teacher');
+      if (scope === 'all') c.add('print-all');
+      else if (scope === 'student') c.add('print-student');
+      else if (scope === 'teacher') c.add('print-teacher');
+      const clear = () => { c.remove('print-all', 'print-student', 'print-teacher'); window.removeEventListener('afterprint', clear); };
+      window.addEventListener('afterprint', clear);
+      setTimeout(() => window.print(), 30);
+    }
+
     function switchSection(sectionId) {
       document.querySelectorAll('.section-view').forEach(el => {
         el.classList.remove('active');
@@ -4681,7 +4828,154 @@
       document.getElementById('sim-result').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
+    /* ============================================================
+       워크시트 — 탭 전환 · 자동 저장 · 시뮬레이터 연동
+       ============================================================ */
+    const WS_KEY = 'mentoring_worksheet_v1';
+
+    function wsSetMode(mode) {
+      const st = document.querySelector('.ws-student');
+      const te = document.querySelector('.ws-teacher');
+      if (st) st.style.display = (mode === 'student') ? '' : 'none';
+      if (te) te.style.display = (mode === 'teacher') ? '' : 'none';
+      document.querySelectorAll('#ws-tabs .sim-tab').forEach(b =>
+        b.classList.toggle('active', b.getAttribute('data-ws') === mode));
+    }
+
+    /* 필드마다 안정적인 키를 만든다 (id 우선, 없으면 순번) */
+    function wsFields() { return Array.from(document.querySelectorAll('.ws-f')); }
+    function wsKeyOf(el, i) { return el.id ? ('#' + el.id) : ('i' + i); }
+
+    function wsSave() {
+      try {
+        const data = {};
+        wsFields().forEach((el, i) => {
+          data[wsKeyOf(el, i)] = (el.type === 'checkbox') ? el.checked : el.value;
+        });
+        localStorage.setItem(WS_KEY, JSON.stringify(data));
+      } catch (e) { /* 저장 불가 환경은 조용히 무시 */ }
+    }
+
+    function wsLoad() {
+      try {
+        const raw = localStorage.getItem(WS_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        wsFields().forEach((el, i) => {
+          const v = data[wsKeyOf(el, i)];
+          if (v === undefined) return;
+          if (el.type === 'checkbox') el.checked = !!v; else el.value = v;
+        });
+      } catch (e) { /* 무시 */ }
+    }
+
+    function wsClear() {
+      if (!confirm('워크시트에 입력한 내용을 모두 지웁니다. 계속할까요?')) return;
+      wsFields().forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });
+      try { localStorage.removeItem(WS_KEY); } catch (e) {}
+      wsFillBand();
+    }
+
+    /* 워크시트의 성적 체계에 맞춰 등급대 목록 채우기 */
+    function wsFillBand() {
+      const scale = (document.getElementById('ws-scale') || {}).value || '5';
+      const sel = document.getElementById('ws-band');
+      if (!sel) return;
+      const keep = Math.max(0, sel.selectedIndex);
+      sel.innerHTML = '';
+      (scale === '5' ? SIM_BANDS_5 : SIM_GRADE_BANDS.map(b => b[0])).forEach(lab => {
+        const o = document.createElement('option');
+        o.value = lab; o.textContent = lab;
+        sel.appendChild(o);
+      });
+      sel.selectedIndex = Math.min(keep, sel.options.length - 1);
+    }
+
+    /* 워크시트 → 시뮬레이터로 값 이관 후 이동 */
+    function wsToSimulator(mode) {
+      const g = id => (document.getElementById(id) || {}).value || '';
+      const set = (id, v) => { const el = document.getElementById(id); if (el && v) el.value = v; };
+
+      set('sim-region', g('ws-region'));
+      set('sim-grade', g('ws-sem'));
+      set('sim-scale', g('ws-scale'));
+      fillBandPicker();
+      const wb = document.getElementById('ws-band'), sb = document.getElementById('sim-grade-band');
+      if (wb && sb) sb.selectedIndex = Math.min(wb.selectedIndex, sb.options.length - 1);
+      renderBandHint();
+      renderRegionBrief();
+
+      const track = g('ws-track');
+      set('sim-track', track || '__UNDECIDED__');
+      set('sim-univ', g('ws-univ'));
+      set('sim-major', g('ws-major'));
+
+      switchSection('sec-simulator');
+
+      if (mode === 'univ') {
+        simSetMode('univ');
+        const u = g('ws-univ').trim();
+        const sel = document.getElementById('sim-pick-univ');
+        const hit = Array.from(sel.options).find(o => o.value === u || o.value.indexOf(u) === 0 || u.indexOf(o.value) === 0);
+        if (u && !hit) {
+          alert('「' + u + '」는 수록된 대학 목록에 없습니다.\n가장 가까운 대학을 직접 골라 주세요.');
+        } else {
+          if (hit) sel.value = hit.value;
+          runUnivSearch();
+        }
+      } else if (mode === 'major') {
+        simSetMode('major');
+        const mj = g('ws-major').trim();
+        const hit = mj ? SIM_DB.find(r => r[F_M].indexOf(mj) !== -1 || mj.indexOf(r[F_M]) !== -1) : null;
+        if (hit) {
+          const f = document.getElementById('sim-pick-fld');
+          f.value = hit[F_FLD]; fillMajorPicker();
+          document.getElementById('sim-pick-major').value = hit[F_M];
+          runMajorSearch();
+        } else {
+          alert(mj ? ('「' + mj + '」와 정확히 일치하는 모집단위를 찾지 못했습니다.\n계열과 모집단위를 직접 골라 주세요.')
+                   : '희망 학과를 먼저 입력해 주세요.');
+        }
+      } else {
+        simSetMode('track');
+        runSimulation();
+      }
+    }
+
+    function initWorksheet() {
+      const regSel = document.getElementById('ws-region');
+      if (!regSel || regSel.options.length) return;
+
+      Object.keys(SIM_REGIONS).forEach(k => {
+        const o = document.createElement('option'); o.value = k; o.textContent = k; regSel.appendChild(o);
+      });
+      const trSel = document.getElementById('ws-track');
+      const blank = document.createElement('option');
+      blank.value = ''; blank.textContent = '아직 정하지 못했습니다';
+      trSel.appendChild(blank);
+      Object.keys(SIM_TRACKS).forEach(k => {
+        const o = document.createElement('option'); o.value = k; o.textContent = k; trSel.appendChild(o);
+      });
+      const dl = document.getElementById('ws-univ-list');
+      const seen = {};
+      SIM_DB.forEach(r => { if (!seen[r[F_U]]) { seen[r[F_U]] = 1;
+        const o = document.createElement('option'); o.value = r[F_U]; dl.appendChild(o); } });
+
+      wsFillBand();
+      wsLoad();
+
+      let t = null;
+      document.addEventListener('input', e => {
+        if (!e.target.classList || !e.target.classList.contains('ws-f')) return;
+        clearTimeout(t); t = setTimeout(wsSave, 400);
+      });
+      document.addEventListener('change', e => {
+        if (e.target.classList && e.target.classList.contains('ws-f')) wsSave();
+      });
+    }
+
     initSimulator();
+    initWorksheet();
   </script>
 </body>
 </html>
