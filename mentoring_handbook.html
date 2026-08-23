@@ -2794,7 +2794,7 @@
       <section id="sec-worksheet" class="section-view">
         <div class="hero-card no-print" style="background:linear-gradient(135deg,#0f766e 0%,#14b8a6 100%); box-shadow:0 10px 25px -5px rgba(20,184,166,.3);">
           <h2><i class="fa-solid fa-clipboard-list"></i> 멘토링 상담 워크시트</h2>
-          <p style="color:#ccfbf1;">화면에서 <strong>직접 입력하며 상담</strong>할 수 있습니다. 입력값은 이 브라우저에 자동 저장되고, 기본정보는 <strong>시뮬레이터로 그대로 넘겨</strong> 바로 설계 결과를 볼 수 있습니다.</p>
+          <p style="color:#ccfbf1;">화면에서 <strong>직접 입력하며 상담</strong>할 수 있습니다. <strong>학생별·회차별로 기록이 쌓이고</strong> 자동 저장되며, 기본정보는 <strong>시뮬레이터로 그대로 넘겨</strong> 바로 설계 결과를 볼 수 있습니다. 백업은 JSON 파일로 내려받아 보관하세요.</p>
         </div>
 
         <div class="card no-print">
@@ -2806,10 +2806,60 @@
             <div style="margin-left:auto; display:flex; flex-wrap:wrap; gap:6px;">
               <button class="btn-print" style="background:var(--primary); color:#fff; border:none; padding:8px 14px; font-size:0.84rem;" onclick="printScope('student')"><i class="fa-solid fa-print"></i> 학생용만 인쇄</button>
               <button class="btn-print" style="background:var(--secondary); color:#fff; border:none; padding:8px 14px; font-size:0.84rem;" onclick="printScope('teacher')"><i class="fa-solid fa-print"></i> 교사용만 인쇄</button>
-              <button class="btn-print" style="background:#f1f5f9; color:#475569; border:1px solid var(--border); padding:8px 14px; font-size:0.84rem;" onclick="wsClear()"><i class="fa-solid fa-eraser"></i> 입력 초기화</button>
             </div>
           </div>
-          <p style="color:var(--text-muted); font-size:0.8rem; margin:10px 0 0;">💡 인쇄 버튼은 <strong>범위별로 나뉘어</strong> 있습니다 — 「학생용만」 약 6쪽, 「교사용만」 약 4쪽. 상단 <strong>「웹북 인쇄 / PDF 저장」</strong>은 <strong>지금 보고 있는 섹션만</strong>, <strong>「전체 인쇄」</strong>는 핸드북 전체(약 70쪽)를 출력합니다. <strong>크롬 인쇄창의 페이지 수도 그에 맞춰 줄어듭니다.</strong></p>
+          <p style="color:var(--text-muted); font-size:0.8rem; margin:10px 0 0;">💡 인쇄 버튼은 <strong>범위별로 나뉘어</strong> 있습니다 — 「학생용만」 약 6쪽, 「교사용만」 약 4쪽. 상단 <strong>「웹북 인쇄 / PDF 저장」</strong>은 <strong>지금 보고 있는 섹션만</strong>, <strong>「전체 인쇄」</strong>는 핸드북 전체(약 70쪽)를 출력합니다. <strong>크롬 인쇄창의 페이지 수도 그에 맞춰 줄어듭니다.</strong> 학생별 보관본이 필요하면 회차를 선택한 뒤 <strong>PDF로 저장</strong>하세요.</p>
+        </div>
+
+        <!-- ===== 학생별 기록 관리 ===== -->
+        <div class="card no-print" style="border:2px solid var(--primary);">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-folder-open text-primary"></i> 학생별 상담 기록 <span id="ws-count" class="badge badge-primary" style="font-size:0.68rem;"></span></h3>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px;">
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">학생 선택</label>
+              <select id="ws-student" onchange="wsSwitchStudent(this.value)" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+              <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
+                <button class="btn-print" style="background:var(--primary); color:#fff; border:none; padding:7px 12px; font-size:0.8rem;" onclick="wsNewStudent()"><i class="fa-solid fa-plus"></i> 학생 추가</button>
+                <button class="btn-print" style="background:#f1f5f9; color:#475569; border:1px solid var(--border); padding:7px 12px; font-size:0.8rem;" onclick="wsRenameStudent()"><i class="fa-solid fa-pen"></i> 이름 변경</button>
+                <button class="btn-print" style="background:#fef2f2; color:#991b1b; border:1px solid #fecaca; padding:7px 12px; font-size:0.8rem;" onclick="wsDeleteStudent()"><i class="fa-solid fa-trash"></i> 학생 삭제</button>
+              </div>
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">상담 회차</label>
+              <select id="ws-session" onchange="wsSwitchSession(this.value)" style="width:100%; padding:9px; border:1px solid var(--border); border-radius:6px;"></select>
+              <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
+                <button class="btn-print" style="background:var(--secondary); color:#fff; border:none; padding:7px 12px; font-size:0.8rem;" onclick="wsNewSession()"><i class="fa-solid fa-calendar-plus"></i> 새 회차</button>
+                <button class="btn-print" style="background:#fef2f2; color:#991b1b; border:1px solid #fecaca; padding:7px 12px; font-size:0.8rem;" onclick="wsDeleteSession()"><i class="fa-solid fa-calendar-xmark"></i> 회차 삭제</button>
+                <button class="btn-print" style="background:#f1f5f9; color:#475569; border:1px solid var(--border); padding:7px 12px; font-size:0.8rem;" onclick="wsClear()"><i class="fa-solid fa-eraser"></i> 입력 비우기</button>
+              </div>
+              <p style="font-size:0.78rem; color:var(--text-muted); margin:8px 0 0;">「새 회차」는 기본정보를 이어받고 상담 내용만 비웁니다. 이전 회차는 그대로 보관됩니다.</p>
+            </div>
+            <div>
+              <label style="font-weight:600; font-size:0.86rem; display:block; margin-bottom:6px;">백업 · 기기 간 이동</label>
+              <div style="display:flex; flex-wrap:wrap; gap:6px;">
+                <button class="btn-print" style="background:#0f766e; color:#fff; border:none; padding:7px 12px; font-size:0.8rem;" onclick="wsExportJson()"><i class="fa-solid fa-file-arrow-down"></i> 전체 백업 (JSON)</button>
+                <button class="btn-print" style="background:#0f766e; color:#fff; border:none; padding:7px 12px; font-size:0.8rem;" onclick="wsExportCsv()"><i class="fa-solid fa-file-csv"></i> 현황표 (CSV)</button>
+                <label class="btn-print" style="background:#f1f5f9; color:#475569; border:1px solid var(--border); padding:7px 12px; font-size:0.8rem; cursor:pointer; display:inline-block;">
+                  <i class="fa-solid fa-file-arrow-up"></i> 불러오기
+                  <input id="ws-import-file" type="file" accept=".json,application/json" style="display:none;">
+                </label>
+              </div>
+              <p id="ws-save-msg" style="font-size:0.78rem; color:var(--success); margin:8px 0 0; min-height:1em;"></p>
+            </div>
+          </div>
+
+          <div class="warning-box" style="margin-top:16px;">
+            <h4><i class="fa-solid fa-shield-halved"></i> 개인정보 취급 — 반드시 확인하세요</h4>
+            <ul style="margin:6px 0 0 18px; line-height:1.85;">
+              <li><strong>입력한 내용은 이 브라우저 안에만 저장되며, 서버로 전송되지 않습니다.</strong> 이 핸드북은 공개 저장소에 올라간 정적 페이지이지만, 학생 정보가 그곳에 올라가는 일은 없습니다.</li>
+              <li><strong>표시명은 실명 대신 학번·이니셜을 권장합니다</strong>(예: <code>2-3-15</code>, <code>H.G.D</code>). 인쇄물에만 실명을 적는 방식이 안전합니다.</li>
+              <li><strong>공용 PC에서는 사용하지 마세요.</strong> 브라우저에 기록이 남습니다. 부득이한 경우 사용 후 「학생 삭제」로 정리하고 브라우저 사이트 데이터를 지우세요.</li>
+              <li><strong>브라우저 데이터를 지우면 기록도 사라집니다.</strong> 상담이 끝날 때마다 <strong>「전체 백업(JSON)」</strong>으로 학교 지정 저장소에 보관하세요.</li>
+              <li><strong>공식 상담 기록은 학교 시스템(NEIS 등)에 남기세요.</strong> 이 도구는 상담 준비·설계를 돕는 보조 수단이며, 공식 기록을 대체하지 않습니다.</li>
+            </ul>
+          </div>
         </div>
 
         <!-- ===== 공통 기본정보 (양쪽 모두 인쇄) ===== -->
@@ -4831,49 +4881,266 @@
     /* ============================================================
        워크시트 — 탭 전환 · 자동 저장 · 시뮬레이터 연동
        ============================================================ */
-    const WS_KEY = 'mentoring_worksheet_v1';
-
     function wsSetMode(mode) {
-      const st = document.querySelector('.ws-student');
+      const stu = document.querySelector('.ws-student');
       const te = document.querySelector('.ws-teacher');
-      if (st) st.style.display = (mode === 'student') ? '' : 'none';
+      if (stu) stu.style.display = (mode === 'student') ? '' : 'none';
       if (te) te.style.display = (mode === 'teacher') ? '' : 'none';
       document.querySelectorAll('#ws-tabs .sim-tab').forEach(b =>
         b.classList.toggle('active', b.getAttribute('data-ws') === mode));
     }
 
-    /* 필드마다 안정적인 키를 만든다 (id 우선, 없으면 순번) */
+    /* ============================================================
+       학생별 상담 기록 관리 (A안)
+       - 저장 위치: 이 브라우저 안에만. 서버로 전송되지 않음
+       - 백업·기기 이동: JSON 파일 내보내기/불러오기
+       - 구조: { students:[{id,label,sessions:[{id,date,round,data}]}], activeId, activeSid }
+       ============================================================ */
+    const WS_DB_KEY = 'mentoring_ws_db_v1';
+    const WS_KEY    = 'mentoring_worksheet_v1';   // 구버전(단일) — 최초 1회 이관용
+    let WSDB = { students: [], activeId: '', activeSid: '' };
+
+    const wsUid = () => 's' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    const wsToday = () => new Date().toISOString().slice(0, 10);
+
     function wsFields() { return Array.from(document.querySelectorAll('.ws-f')); }
     function wsKeyOf(el, i) { return el.id ? ('#' + el.id) : ('i' + i); }
 
-    function wsSave() {
-      try {
-        const data = {};
-        wsFields().forEach((el, i) => {
-          data[wsKeyOf(el, i)] = (el.type === 'checkbox') ? el.checked : el.value;
-        });
-        localStorage.setItem(WS_KEY, JSON.stringify(data));
-      } catch (e) { /* 저장 불가 환경은 조용히 무시 */ }
+    function wsReadForm() {
+      const d = {};
+      wsFields().forEach((el, i) => { d[wsKeyOf(el, i)] = (el.type === 'checkbox') ? el.checked : el.value; });
+      return d;
+    }
+    function wsWriteForm(d) {
+      d = d || {};
+      /* 성적 체계를 먼저 반영해야 등급대 목록이 맞게 채워진다 */
+      const sc = document.getElementById('ws-scale');
+      if (sc) { if (d['#ws-scale']) sc.value = d['#ws-scale']; else sc.selectedIndex = 0; wsFillBand(); }
+
+      wsFields().forEach((el, i) => {
+        if (el.id === 'ws-scale') return;                 // 위에서 처리함
+        const v = d[wsKeyOf(el, i)];
+        if (el.type === 'checkbox') { el.checked = (v === undefined) ? false : !!v; return; }
+        if (el.tagName === 'SELECT') {
+          /* select 는 빈 문자열로 덮으면 선택이 풀린다 — 없는 값이면 첫 옵션으로 */
+          if (v === undefined) { el.selectedIndex = 0; return; }
+          const has = Array.from(el.options).some(o => o.value === v);
+          if (has) el.value = v; else el.selectedIndex = 0;
+          return;
+        }
+        el.value = (v === undefined) ? '' : v;
+      });
     }
 
-    function wsLoad() {
+    function wsDbSave() {
+      try { localStorage.setItem(WS_DB_KEY, JSON.stringify(WSDB)); return true; }
+      catch (e) { return false; }
+    }
+    function wsDbLoad() {
       try {
-        const raw = localStorage.getItem(WS_KEY);
-        if (!raw) return;
-        const data = JSON.parse(raw);
-        wsFields().forEach((el, i) => {
-          const v = data[wsKeyOf(el, i)];
-          if (v === undefined) return;
-          if (el.type === 'checkbox') el.checked = !!v; else el.value = v;
-        });
-      } catch (e) { /* 무시 */ }
+        const raw = localStorage.getItem(WS_DB_KEY);
+        if (raw) { WSDB = JSON.parse(raw); return; }
+        /* 구버전 단일 저장분이 있으면 학생 1명으로 이관 */
+        const old = localStorage.getItem(WS_KEY);
+        if (old) {
+          const d = JSON.parse(old);
+          WSDB = { students: [{ id: wsUid(), label: d['#ws-name'] || '학생 1',
+                   sessions: [{ id: wsUid(), date: d['#ws-date'] || wsToday(), round: d['#ws-round'] || '1차', data: d }] }],
+                   activeId: '', activeSid: '' };
+          WSDB.activeId = WSDB.students[0].id;
+          WSDB.activeSid = WSDB.students[0].sessions[0].id;
+          wsDbSave();
+        }
+      } catch (e) { WSDB = { students: [], activeId: '', activeSid: '' }; }
+    }
+
+    const wsStudent = () => WSDB.students.find(s => s.id === WSDB.activeId) || null;
+    const wsSession = () => { const st = wsStudent(); return st ? (st.sessions.find(x => x.id === WSDB.activeSid) || st.sessions[0] || null) : null; };
+
+    /* 현재 폼 → 활성 회차에 저장 */
+    function wsSave() {
+      const st = wsStudent(), se = wsSession();
+      if (!st || !se) return;
+      se.data = wsReadForm();
+      se.date = se.data['#ws-date'] || se.date;
+      se.round = se.data['#ws-round'] || se.round;
+      const nm = (se.data['#ws-name'] || '').trim();
+      if (nm) st.label = nm;
+      st.updatedAt = new Date().toISOString();
+      const ok = wsDbSave();
+      const el = document.getElementById('ws-save-msg');
+      if (el) {
+        el.textContent = ok ? ('저장됨 · ' + new Date().toLocaleTimeString('ko-KR')) : '⚠️ 저장 실패 (브라우저 저장 공간 확인)';
+        el.style.color = ok ? 'var(--success)' : 'var(--danger)';
+      }
+      wsRenderPickers();
+    }
+
+    function wsNewStudent(silent) {
+      const label = silent ? '새 학생' : (prompt('학생 표시명을 입력하세요.\n※ 개인정보 보호를 위해 실명보다 학번·이니셜을 권장합니다.', '') || '').trim();
+      if (!silent && !label) return;
+      const st = { id: wsUid(), label: label || '새 학생', updatedAt: new Date().toISOString(),
+                   sessions: [{ id: wsUid(), date: wsToday(), round: '1차', data: {} }] };
+      WSDB.students.push(st);
+      WSDB.activeId = st.id; WSDB.activeSid = st.sessions[0].id;
+      wsWriteForm({});
+      const d = document.getElementById('ws-date'); if (d) d.value = wsToday();
+      const r = document.getElementById('ws-round'); if (r) r.value = '1차';
+      const n = document.getElementById('ws-name'); if (n && label) n.value = label;
+      wsDbSave(); wsRenderPickers();
+    }
+
+    function wsSwitchStudent(id) {
+      wsSave();
+      WSDB.activeId = id;
+      const st = wsStudent();
+      WSDB.activeSid = st && st.sessions.length ? st.sessions[st.sessions.length - 1].id : '';
+      wsWriteForm(wsSession() ? wsSession().data : {});
+      wsDbSave(); wsRenderPickers();
+    }
+
+    function wsSwitchSession(sid) {
+      wsSave();
+      WSDB.activeSid = sid;
+      wsWriteForm(wsSession() ? wsSession().data : {});
+      wsDbSave(); wsRenderPickers();
+    }
+
+    /* 새 회차 — 기본정보는 이어받고 상담 내용은 비운다 */
+    function wsNewSession() {
+      const st = wsStudent();
+      if (!st) { alert('먼저 학생을 추가하세요.'); return; }
+      wsSave();
+      const prev = wsSession();
+      const carry = ['#ws-name','#ws-school','#ws-sem','#ws-region','#ws-track','#ws-scale','#ws-univ','#ws-band','#ws-major'];
+      const data = {};
+      if (prev) carry.forEach(k => { if (prev.data[k] !== undefined) data[k] = prev.data[k]; });
+      const n = st.sessions.length + 1;
+      data['#ws-date'] = wsToday();
+      data['#ws-round'] = n + '차';
+      const se = { id: wsUid(), date: data['#ws-date'], round: data['#ws-round'], data: data };
+      st.sessions.push(se);
+      WSDB.activeSid = se.id;
+      wsWriteForm(data); wsDbSave(); wsRenderPickers();
+    }
+
+    function wsDeleteStudent() {
+      const st = wsStudent();
+      if (!st) return;
+      if (!confirm('「' + st.label + '」의 상담 기록 ' + st.sessions.length + '건을 모두 삭제합니다.\n이 작업은 되돌릴 수 없습니다. 계속할까요?')) return;
+      WSDB.students = WSDB.students.filter(x => x.id !== st.id);
+      if (WSDB.students.length) wsSwitchStudent(WSDB.students[0].id);
+      else { WSDB.activeId = ''; WSDB.activeSid = ''; wsWriteForm({}); wsFillBand(); wsDbSave(); wsRenderPickers(); }
+    }
+
+    function wsDeleteSession() {
+      const st = wsStudent(), se = wsSession();
+      if (!st || !se) return;
+      if (st.sessions.length <= 1) { alert('마지막 회차는 삭제할 수 없습니다. 학생 삭제를 사용하세요.'); return; }
+      if (!confirm('「' + se.round + ' (' + se.date + ')」 회차를 삭제합니다. 계속할까요?')) return;
+      st.sessions = st.sessions.filter(x => x.id !== se.id);
+      wsSwitchSession(st.sessions[st.sessions.length - 1].id);
+    }
+
+    function wsRenameStudent() {
+      const st = wsStudent();
+      if (!st) return;
+      const v = (prompt('표시명을 수정합니다.', st.label) || '').trim();
+      if (!v) return;
+      st.label = v;
+      const n = document.getElementById('ws-name'); if (n) n.value = v;
+      wsSave();
+    }
+
+    function wsRenderPickers() {
+      const sSel = document.getElementById('ws-student'), rSel = document.getElementById('ws-session');
+      if (!sSel || !rSel) return;
+      sSel.innerHTML = '';
+      if (!WSDB.students.length) {
+        const o = document.createElement('option'); o.value = ''; o.textContent = '(학생 없음 — 「+ 학생 추가」)';
+        sSel.appendChild(o);
+      }
+      WSDB.students.forEach(st => {
+        const o = document.createElement('option');
+        o.value = st.id; o.textContent = st.label + ' (' + st.sessions.length + '회)';
+        sSel.appendChild(o);
+      });
+      sSel.value = WSDB.activeId;
+
+      rSel.innerHTML = '';
+      const st = wsStudent();
+      (st ? st.sessions : []).forEach(se => {
+        const o = document.createElement('option');
+        o.value = se.id; o.textContent = (se.round || '') + ' · ' + (se.date || '');
+        rSel.appendChild(o);
+      });
+      rSel.value = WSDB.activeSid;
+
+      const cnt = document.getElementById('ws-count');
+      if (cnt) cnt.textContent = '학생 ' + WSDB.students.length + '명 · 기록 '
+        + WSDB.students.reduce((a, s) => a + s.sessions.length, 0) + '건';
+    }
+
+    /* ===== 내보내기 / 불러오기 ===== */
+    function wsDownload(name, text, mime) {
+      const blob = new Blob(["﻿" + text], { type: (mime || 'text/plain') + ';charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    function wsExportJson() {
+      wsSave();
+      const payload = { app: 'mentoring_handbook', ver: 1, exportedAt: new Date().toISOString(), db: WSDB };
+      wsDownload('mentoring_backup_' + wsToday() + '.json', JSON.stringify(payload, null, 2), 'application/json');
+    }
+
+    function wsExportCsv() {
+      wsSave();
+      const cols = [['학생','label'],['회차','#ws-round'],['상담일','#ws-date'],['학교','#ws-school'],
+        ['학년학기','#ws-sem'],['지역','#ws-region'],['계열','#ws-track'],['성적체계','#ws-scale'],
+        ['내신등급대','#ws-band'],['희망대학','#ws-univ'],['희망학과','#ws-major']];
+      const esc = v => '"' + String(v === undefined || v === null ? '' : v).replace(/"/g, '""') + '"';
+      const lines = [cols.map(c => esc(c[0])).join(',')];
+      WSDB.students.forEach(st => st.sessions.forEach(se => {
+        lines.push(cols.map(c => esc(c[1] === 'label' ? st.label : (se.data || {})[c[1]])).join(','));
+      }));
+      wsDownload('mentoring_summary_' + wsToday() + '.csv', lines.join('\r\n'), 'text/csv');
+    }
+
+    function wsImportJson(file) {
+      const rd = new FileReader();
+      rd.onload = () => {
+        try {
+          const p = JSON.parse(rd.result);
+          const db = (p && p.db) ? p.db : p;
+          if (!db || !Array.isArray(db.students)) throw new Error('형식이 올바르지 않습니다.');
+          const mode = confirm('불러오기 방식을 선택하세요.\n\n[확인] 기존 기록에 추가(병합)\n[취소] 기존 기록을 지우고 교체');
+          if (mode) {
+            const have = {};
+            WSDB.students.forEach(s => { have[s.id] = 1; });
+            db.students.forEach(s => { if (have[s.id]) s.id = wsUid(); WSDB.students.push(s); });
+          } else {
+            WSDB = { students: db.students, activeId: '', activeSid: '' };
+          }
+          if (WSDB.students.length) {
+            WSDB.activeId = WSDB.students[0].id;
+            WSDB.activeSid = WSDB.students[0].sessions.length ? WSDB.students[0].sessions[0].id : '';
+          }
+          wsWriteForm(wsSession() ? wsSession().data : {});
+          wsFillBand(); wsDbSave(); wsRenderPickers();
+          alert('불러오기 완료 — 학생 ' + WSDB.students.length + '명');
+        } catch (e) { alert('불러오기 실패: ' + e.message); }
+      };
+      rd.readAsText(file, 'utf-8');
     }
 
     function wsClear() {
-      if (!confirm('워크시트에 입력한 내용을 모두 지웁니다. 계속할까요?')) return;
-      wsFields().forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; });
-      try { localStorage.removeItem(WS_KEY); } catch (e) {}
-      wsFillBand();
+      if (!confirm('현재 회차에 입력한 내용을 비웁니다. (학생·회차 목록은 유지)\n계속할까요?')) return;
+      wsWriteForm({});
+      wsSave();
     }
 
     /* 워크시트의 성적 체계에 맞춰 등급대 목록 채우기 */
@@ -4962,16 +5229,29 @@
         const o = document.createElement('option'); o.value = r[F_U]; dl.appendChild(o); } });
 
       wsFillBand();
-      wsLoad();
+      wsDbLoad();
+      if (!WSDB.students.length) wsNewStudent(true);
+      if (!WSDB.activeId) WSDB.activeId = WSDB.students[0].id;
+      const st0 = wsStudent();
+      if (st0 && !WSDB.activeSid) WSDB.activeSid = st0.sessions[0].id;
+      wsWriteForm(wsSession() ? wsSession().data : {});
+      wsRenderPickers();
+
+      const fileEl = document.getElementById('ws-import-file');
+      if (fileEl) fileEl.addEventListener('change', e => {
+        if (e.target.files && e.target.files[0]) wsImportJson(e.target.files[0]);
+        e.target.value = '';
+      });
 
       let t = null;
       document.addEventListener('input', e => {
         if (!e.target.classList || !e.target.classList.contains('ws-f')) return;
-        clearTimeout(t); t = setTimeout(wsSave, 400);
+        clearTimeout(t); t = setTimeout(wsSave, 500);
       });
       document.addEventListener('change', e => {
         if (e.target.classList && e.target.classList.contains('ws-f')) wsSave();
       });
+      window.addEventListener('beforeunload', () => { try { wsSave(); } catch (e) {} });
     }
 
     initSimulator();
