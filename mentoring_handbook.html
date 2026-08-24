@@ -397,6 +397,49 @@
       margin: 16px 0;
     }
 
+    /* ===== 진로설계 플로우차트 ===== */
+    .flow { margin: 14px 0 6px; }
+    .flow-step {
+      border: 2px solid var(--border); border-radius: 10px;
+      padding: 12px 16px; background: #fff; position: relative;
+    }
+    .flow-step + .flow-arrow { margin: 0 auto; }
+    .flow-arrow {
+      width: 0; height: 0; margin: 6px auto;
+      border-left: 9px solid transparent; border-right: 9px solid transparent;
+      border-top: 12px solid #94a3b8;
+    }
+    .flow-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--primary); color: #fff; font-size: 0.8rem; font-weight: 700;
+      margin-right: 8px; flex: 0 0 auto;
+    }
+    .flow-q { font-size: 0.82rem; color: var(--text-muted); margin: 2px 0 0 32px; }
+    .flow-body { margin: 10px 0 0 32px; }
+    .flow-step.is-school { border-color: #f59e0b; background: #fffbeb; }
+    .flow-step.is-result { border-color: var(--success); background: #f0fdf4; }
+    .flow-step.is-common { border-color: #94a3b8; background: #f8fafc; }
+    .flow-branch {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px; margin-top: 10px;
+    }
+    .flow-case {
+      border: 1px dashed #cbd5e1; border-radius: 8px; padding: 10px 12px;
+      background: #fff; font-size: 0.86rem;
+    }
+    .flow-case b { display: block; margin-bottom: 4px; }
+    .subj-tier {
+      display: grid; grid-template-columns: 96px 1fr; gap: 10px;
+      align-items: start; padding: 9px 0; border-top: 1px dashed #e2e8f0;
+    }
+    .subj-tier:first-of-type { border-top: none; }
+    .subj-tier > span:first-child { font-weight: 700; font-size: 0.84rem; padding-top: 3px; }
+    @media (max-width: 520px) {
+      .subj-tier { grid-template-columns: 1fr; gap: 4px; }
+      .flow-q, .flow-body { margin-left: 0; }
+    }
+
     .sim-tab {
       background: #f1f5f9; color: #475569; border: 1px solid var(--border);
       border-radius: 8px; padding: 10px 16px; font-size: 0.88rem; font-weight: 600;
@@ -4460,6 +4503,62 @@
     }
 
     /* ============================================================
+       계열별 과목 — 학기 배치가 아니라 '위계'로 제시한다.
+       학교마다 편제가 다르므로 특정 학기에 특정 과목을 못 박지 않는다.
+       ============================================================ */
+    const SIM_SUBJ3 = {
+      "의약학": {
+        why: "생명 현상을 <strong>화학·생물학 수준에서 이해</strong>하고, 그 변화를 <strong>수학적으로 다루는 힘</strong>이 필요합니다. 의학 논문과 통계를 읽어야 하므로 확률·통계도 기초가 됩니다.",
+        general: ["대수", "미적분Ⅰ", "확률과 통계", "화학", "생명과학"],
+        career:  ["미적분Ⅱ", "기하", "세포와 물질대사", "생물의 유전", "화학 반응의 세계", "물질과 에너지"],
+        fusion:  ["융합과학 탐구", "과학의 역사와 문화", "기후변화와 환경생태"],
+        note: "서울대는 의과대학에 <strong>과학 진로선택 3과목 이상</strong>(‘세포와 물질대사’ 포함)을 권장합니다. 화학과 생명과학을 <strong>둘 다</strong> 진로선택까지 가져가는 것이 핵심입니다."
+      },
+      "첨단 IT·AI": {
+        why: "프로그래밍 자체보다 <strong>알고리즘을 수학으로 다루는 힘</strong>을 봅니다. 선형대수(기하)·미적분·확률통계가 인공지능의 기초 언어입니다.",
+        general: ["대수", "미적분Ⅰ", "확률과 통계", "정보", "물리학"],
+        career:  ["미적분Ⅱ", "기하", "인공지능 수학", "인공지능 기초", "데이터 과학", "전자기와 양자"],
+        fusion:  ["수학과제 탐구", "실용 통계", "소프트웨어와 생활"],
+        note: "‘정보’는 기술·가정/정보 교과의 <strong>일반선택</strong>, ‘인공지능 기초·데이터 과학’은 <strong>진로선택</strong>입니다. 코딩 경험만으로는 변별되지 않으니 <strong>수학 원리를 코드로 옮긴 흔적</strong>을 남기세요."
+      },
+      "전통 공학": {
+        why: "물체와 에너지의 운동을 <strong>수식으로 예측하는 힘</strong>이 전공의 토대입니다. 세부 전공에 따라 물리와 화학의 비중이 갈립니다.",
+        general: ["대수", "미적분Ⅰ", "확률과 통계", "물리학", "화학"],
+        career:  ["미적분Ⅱ", "기하", "역학과 에너지", "전자기와 양자", "물질과 에너지", "화학 반응의 세계"],
+        fusion:  ["융합과학 탐구", "수학과제 탐구", "과학의 역사와 문화"],
+        note: "전자전기·기계는 <strong>물리</strong>, 화공·신소재는 <strong>화학</strong>의 비중이 큽니다. 목표 학과를 좁힌 뒤 어느 쪽을 진로선택까지 끌고 갈지 정하세요."
+      },
+      "상경": {
+        why: "사회 현상을 <strong>데이터로 분석하는 힘</strong>이 핵심입니다. 문과 계열 중 수학 이수 심도를 가장 엄격하게 평가받습니다.",
+        general: ["대수", "미적분Ⅰ", "확률과 통계", "사회와 문화"],
+        career:  ["경제", "경제 수학", "미적분Ⅱ", "법과 사회", "국제 관계의 이해"],
+        fusion:  ["금융과 경제생활", "실용 통계", "사회문제 탐구"],
+        note: "‘경제’ 미이수는 상경계열에서 <strong>가장 눈에 띄는 공백</strong>입니다. 수학을 피하면 그대로 하향 지원이 됩니다."
+      },
+      "인문·사회": {
+        why: "텍스트와 사회 구조를 <strong>비판적으로 읽고 논증하는 힘</strong>이 전공의 토대입니다. 사회과학은 통계 소양도 함께 봅니다.",
+        general: ["독서와 작문", "문학", "사회와 문화", "세계시민과 지리", "세계사", "확률과 통계"],
+        career:  ["정치", "법과 사회", "윤리와 사상", "인문학과 윤리", "국제 관계의 이해", "주제 탐구 독서"],
+        fusion:  ["사회문제 탐구", "윤리문제 탐구", "매체 의사소통", "역사로 탐구하는 현대 세계"],
+        note: "인문학(어문·사학·철학)과 사회과학(정외·행정·심리·미디어)은 요구 과목이 다릅니다. 어문 계열은 <strong>제2외국어</strong> 이수가 직접적인 강점이 됩니다."
+      },
+      "교육(사범)": {
+        why: "<strong>가르칠 교과를 깊이 아는 것</strong>이 전부입니다. 초등교육(교대)은 정반대로 전 과목 균형을 봅니다.",
+        general: ["지망 교과의 일반선택 전 과목", "확률과 통계"],
+        career:  ["지망 교과의 진로선택 전 과목", "교육의 이해(교양)", "인간과 심리(교양)"],
+        fusion:  ["지망 교과의 융합선택", "논술·토론 관련 융합선택"],
+        note: "중등 사범은 <strong>지망 교과를 깊게</strong>, 교대는 <strong>국·수·영·사·과를 고르게</strong>. 준비 방향이 정반대이므로 고2 수강신청 전에 결정해야 합니다."
+      },
+      "예체능": {
+        why: "실기 역량이 절대적이지만, <strong>전공 교과 이수 이력</strong> 자체가 전공 적합성의 증거가 됩니다.",
+        general: ["음악 / 미술 / 체육 일반선택", "전공 연계 교과"],
+        career:  ["음악 연주와 창작", "미술 창작", "운동과 건강 등 전공 진로선택"],
+        fusion:  ["음악과 미디어", "미술과 매체", "스포츠 생활 등"],
+        note: "실기 준비와 병행하되 <strong>전공 교과 미이수는 실기가 좋아도 마이너스</strong>입니다. 대학별 실기 : 학생부 반영 비율을 먼저 확인하세요."
+      }
+    };
+
+    /* ============================================================
        학기별 의사결정 타임라인 — 고1·2 상담의 핵심은 '마감이 있는 결정'
        ============================================================ */
     const SIM_TIMELINE = [
@@ -4727,11 +4826,98 @@
         ? `<strong>${esc(univ || '희망 대학')} ${esc(major || '희망 학과')}</strong> 지원을 목표로 한 `
         : '';
 
-      const remainSemesters = track.roadmap.slice(semIdx);   // 남은 학기만
+      /* ===== 진로설계 플로우차트 =====
+         학교마다 교육과정 편제가 다르므로 '학기별 확정 배치'로 제시하지 않는다.
+         진로 → 역량 → 교과(위계) → 학교 편성표 대조 → 이수·기록 흐름으로 보여준다. */
+      const SJ = undecided ? null : SIM_SUBJ3[trackKey];
+      const chip = (arr, cls) => (arr || []).map(x => `<span class="badge ${cls}" style="margin:2px;">${esc(x)}</span>`).join(' ');
 
-      const roadmapRows = remainSemesters.map(r => `
-        <tr><td><strong>${esc(r[0])}</strong></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>
-      `).join('');
+      const tierBlock = SJ ? `
+              <div class="subj-tier">
+                <span style="color:#0f766e;">일반선택<br><small style="font-weight:400;">기초를 쌓는 층</small></span>
+                <div>${chip(SJ.general, 'badge-success')}</div>
+              </div>
+              <div class="subj-tier">
+                <span style="color:var(--danger);">진로선택<br><small style="font-weight:400;">전공 적합성이<br>드러나는 층</small></span>
+                <div>${chip(SJ.career, 'badge-danger')}</div>
+              </div>
+              <div class="subj-tier">
+                <span style="color:var(--primary);">융합선택<br><small style="font-weight:400;">석차등급 없음<br>부담 없이 확장</small></span>
+                <div>${chip(SJ.fusion, 'badge-primary')}</div>
+              </div>` : `
+              <div class="subj-tier">
+                <span style="color:#0f766e;">일반선택</span>
+                <div>${chip(['대수','미적분Ⅰ','확률과 통계','물리학·화학·생명과학 중 2과목','사회와 문화 또는 경제'], 'badge-success')}</div>
+              </div>
+              <div class="subj-tier">
+                <span style="color:var(--danger);">진로선택</span>
+                <div><span style="font-size:0.88rem; color:var(--text-muted);">계열을 정한 뒤 결정합니다. 지금은 <strong>일반선택을 넓게</strong> 잡아 두는 것이 최선입니다.</span></div>
+              </div>
+              <div class="subj-tier">
+                <span style="color:var(--primary);">융합선택</span>
+                <div><span style="font-size:0.88rem; color:var(--text-muted);">사회·과학 융합선택 9과목은 <strong>석차등급이 없으므로</strong> 관심 가는 것을 탐색용으로 들으세요.</span></div>
+              </div>`;
+
+      const flowBlock = `
+        <div class="flow">
+          <div class="flow-step is-common">
+            <div style="display:flex; align-items:center;"><span class="flow-num" style="background:#94a3b8;">0</span><strong>고1 — 공통과목 시기: 학생이 선택할 과목이 없습니다</strong></div>
+            <p class="flow-q">고1은 <strong>학교가 편성한 공통과목</strong>(공통국어·공통수학·공통영어·통합사회·통합과학·한국사 등)을 이수합니다. 학생이 고르는 과목은 원칙적으로 없습니다.</p>
+            <div class="flow-body" style="font-size:0.9rem;">➡️ 이 시기의 과제는 과목 선택이 아니라 <strong>① 학교 교육과정 편성표 확보 ② 계열 탐색 ③ 공통과목 내신 확보 ④ 세특의 재료가 될 질문·기록 습관</strong>입니다.</div>
+          </div>
+          <div class="flow-arrow"></div>
+
+          <div class="flow-step">
+            <div style="display:flex; align-items:center;"><span class="flow-num">1</span><strong>무엇을 공부하고 싶은가</strong></div>
+            <p class="flow-q">진로·학과를 좁힙니다. 완전히 정하지 않아도 <strong>계열 수준</strong>이면 충분합니다.</p>
+            <div class="flow-body">${undecided
+              ? '<span style="font-size:0.9rem;">아직 미결정 — <strong>지금 좁히지 않아도 됩니다.</strong> 대신 아래 3단계에서 선택지를 넓게 유지하는 과목 조합을 잡으세요.</span>'
+              : `<span class="badge badge-primary" style="font-size:0.9rem;">${esc(trackKey)}</span>${major ? ' <span class="badge badge-danger" style="font-size:0.9rem;">' + esc(major) + '</span>' : ''}`}</div>
+          </div>
+          <div class="flow-arrow"></div>
+
+          <div class="flow-step">
+            <div style="display:flex; align-items:center;"><span class="flow-num">2</span><strong>그 공부를 하려면 어떤 힘이 필요한가</strong></div>
+            <p class="flow-q">과목을 고르기 전에 <strong>왜 그 과목인지</strong>가 먼저입니다. 이 이유를 말할 수 있어야 세특도 면접도 이어집니다.</p>
+            <div class="flow-body" style="font-size:0.92rem;">${SJ ? SJ.why : '계열마다 요구하는 역량이 다릅니다. 계열을 정하면 이 자리에 구체적인 설명이 표시됩니다.'}</div>
+          </div>
+          <div class="flow-arrow"></div>
+
+          <div class="flow-step">
+            <div style="display:flex; align-items:center;"><span class="flow-num">3</span><strong>그 힘은 어느 과목에서 자라는가</strong></div>
+            <p class="flow-q"><strong>고2~3에 학생이 선택하는 구간</strong>입니다. 아래는 <u>학기 배치가 아니라 위계</u>입니다 — 일반선택에서 기초를 쌓고, 진로선택에서 전공 적합성이 드러납니다.</p>
+            <div class="flow-body">
+              ${tierBlock}
+              ${SJ ? `<p style="margin:10px 0 0; font-size:0.88rem; padding-top:8px; border-top:1px dashed #e2e8f0;">💡 ${SJ.note}</p>` : ''}
+              <p style="margin:8px 0 0; font-size:0.84rem; color:var(--text-muted);">※ 위계 원칙 — <strong>일반선택을 먼저 이수해야 같은 교과의 진로선택을 들을 수 있습니다</strong>(예: 미적분Ⅰ → 미적분Ⅱ, 과학Ⅰ → 과학Ⅱ). 순서가 꼬이면 3학년에 원하는 과목을 못 듣습니다.</p>
+            </div>
+          </div>
+          <div class="flow-arrow"></div>
+
+          <div class="flow-step is-school">
+            <div style="display:flex; align-items:center;"><span class="flow-num" style="background:#f59e0b;">4</span><strong>우리 학교에 그 과목이 개설되어 있는가</strong> <span class="badge badge-warning" style="margin-left:8px; font-size:0.68rem;">여기서 갈립니다</span></div>
+            <p class="flow-q"><strong>학교마다 교육과정 편제가 다릅니다.</strong> 위 목록은 "들어야 하는 과목"이 아니라 <strong>"개설되어 있다면 우선순위가 높은 과목"</strong>입니다. 반드시 <strong>학교 편성표와 대조</strong>하세요.</p>
+            <div class="flow-branch">
+              <div class="flow-case"><b style="color:var(--success);">✅ 개설되어 있다</b>학교 정규과목으로 이수합니다. 선택군(택1)에서 충돌하면 <strong>① 대학 핵심 권장과목 → ② 후속 과목의 선수과목 → ③ 나머지</strong> 순으로 우선순위를 정하세요.</div>
+              <div class="flow-case"><b style="color:#b45309;">🔶 개설되지 않았다</b><strong>공동교육과정</strong>(주말·거점학교) 또는 <strong>온라인학교</strong>로 이수할 수 있습니다. <strong>신청 시기가 정해져 있으니</strong> 학기 초에 확인하세요.</div>
+              <div class="flow-case"><b style="color:var(--text-muted);">⬜ 그래도 방법이 없다</b><strong>불이익이 아닙니다.</strong> 서울대는 <strong>"고교의 교육과정 편성 및 운영 환경(소규모 학교의 과목 개설 여건 등)을 고려하여 전공 연계 과목 이수 여부를 확인"</strong>한다고 명시했습니다. 인접 과목을 듣고 <strong>세특에서 그 내용을 다루면</strong> 됩니다.</div>
+            </div>
+          </div>
+          <div class="flow-arrow"></div>
+
+          <div class="flow-step">
+            <div style="display:flex; align-items:center;"><span class="flow-num">5</span><strong>그 과목에서 무엇을 남겼는가</strong></div>
+            <p class="flow-q"><strong>이수 자체보다 이 단계가 중요합니다.</strong> 과목을 들었다는 사실은 학생부에 한 줄이지만, 그 안에서 무엇을 했는지는 세특에 남습니다.</p>
+            <div class="flow-body" style="font-size:0.9rem;">교과 진도에서 출발한 질문 → 직접 수행한 분석(수식 전개·데이터·실험·코드) → 수업 중 발표. <strong>진로선택 과목은 성취도 A</strong>를 목표로 하세요.</div>
+          </div>
+          <div class="flow-arrow"></div>
+
+          <div class="flow-step is-result">
+            <div style="display:flex; align-items:center;"><span class="flow-num" style="background:var(--success);">✓</span><strong>학생부에 '진로 일관성'으로 나타납니다</strong></div>
+            <p class="flow-q" style="color:var(--secondary);">1~5단계가 이어지면 <strong>"왜 이 과목을 골랐는지"</strong>가 학생부 전체에서 하나의 이야기로 읽힙니다. 이것이 학종 진로역량 평가의 실체입니다.</p>
+            <div class="flow-body" style="font-size:0.9rem;">반대로 <strong>등급이 잘 나올 것 같은 과목만 골라 담으면</strong> 이 연결이 끊깁니다. 2028부터는 <strong>교과전형에도 이수 내역이 평가</strong>되므로(경북대 교과이수충실도 20%, 한양대 정성평가 40%) 더 불리해집니다.</div>
+          </div>
+        </div>`;
 
       const coreChips = track.core.map(c => `<span class="badge badge-danger" style="margin:2px;">${esc(c)}</span>`).join(' ');
       const recChips = track.recommended.map(c => `<span class="badge badge-primary" style="margin:2px;">${esc(c)}</span>`).join(' ');
@@ -4874,14 +5060,11 @@
           <p style="margin-bottom:6px;">🔴 핵심 권장과목: ${coreChips}</p>
           <p style="margin-bottom:14px;">🔵 권장과목: ${recChips}</p>
 
-          <h4 style="margin:14px 0 8px; color:var(--secondary);"><i class="fa-solid fa-timeline"></i> ${esc(TL.label)} 기준 <strong>남은 학기</strong> 과목 로드맵</h4>
-          <p style="color:var(--text-muted); font-size:0.85rem; margin:0 0 8px;">이미 지난 학기는 제외하고, <strong>앞으로 신청할 수 있는 학기만</strong> 보여줍니다. 학교 편성표와 나란히 놓고 대조하세요.</p>
-          <div class="table-container">
-            <table>
-              <thead><tr><th>학기</th><th>수학</th><th>과학/전문교과</th><th>사회/기타</th></tr></thead>
-              <tbody>${roadmapRows}</tbody>
-            </table>
+          <h4 style="margin:14px 0 8px; color:var(--secondary);"><i class="fa-solid fa-diagram-project"></i> 진로설계 흐름 — 과목은 이 흐름의 <strong>결과</strong>입니다</h4>
+          <div class="callout callout-warning" style="margin:0 0 10px;">
+            <p style="margin:0; font-size:0.9rem;"><strong>주의</strong> — 아래 과목은 <strong>"몇 학년 몇 학기에 반드시 들어야 하는 목록"이 아닙니다.</strong> 학교마다 교육과정 편제가 다르므로 개설 과목과 배치 학기가 다릅니다. <strong>학교 교육과정 편성표를 옆에 두고</strong> 대조하며 읽으세요.</p>
           </div>
+          ${flowBlock}
 
           ${blockerBlock}
 
